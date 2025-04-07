@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<canales cantidad="6">
+  <entrada>
+    <canal numero="0">Nombre</canal>
+    <canal numero="1">Nombre</canal>
+    <canal numero="2">Nombre</canal>
+    <canal numero="3">Nombre</canal>
+    <canal numero="4">Nombre</canal>
+    <canal mumero="5">Nombre</canal>
+  </entrada>
+  <salida>
+    <canal numero="0">Nombre</canal>
+    <canal numero="1">Nombre</canal>
+    <canal numero="2">Nombre</canal>
+    <canal numero="3">Nombre</canal>
+    <canal numero="5">Nombre</canal>
+    <canal numero="4">Nombre</canal>
+  </salida>
+</canales>
