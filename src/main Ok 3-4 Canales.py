@@ -1,7 +1,4 @@
 from PySide6 import QtWidgets,QtGui
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 import sys,os
 from os import listdir
 import shutil
@@ -10,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 import psd_tools.compression
 import psd_tools.psd
-from ui import *
+from ui.Swiper_UI import *
 from psd_tools.compression import compress, decompress
 from psd_tools.constants import Compression
 from psd_tools.utils import pack, read_fmt, write_bytes, write_fmt
@@ -43,7 +40,7 @@ class Aplicacion(QtWidgets.QMainWindow):
             self.ui.setupUi4k(self)
 
         # Obtener la lista de archivos xml en la carpeta
-        self.folder_path = "XML"
+        self.folder_path = "../XML"
         xmlfiles = [f for f in listdir(self.folder_path) if os.path.isfile(os.path.join(self.folder_path, f))]
 
         # Obtener una referencia al objeto list_shemes desde la interfaz de usuario
@@ -109,7 +106,7 @@ class Aplicacion(QtWidgets.QMainWindow):
         new_name, ok_pressed = QtWidgets.QInputDialog.getText(self, "Nuevo Nombre", "Ingrese el nombre del esquema:")
 
         if ok_pressed:
-            folder_path = "XML"
+            folder_path = "../XML"
             new_file = os.path.join(folder_path, new_name + ".xml")
             shutil.copy(base_file, new_file)
             # Mostrar los archivos en el objeto list
@@ -224,7 +221,7 @@ class Aplicacion(QtWidgets.QMainWindow):
         item = self.list_schemes_model.item(row)
         print(f"Numero fila lista xml: {row}")
 
-        scheme_file = os.path.join("XML/", item.text())
+        scheme_file = os.path.join("../XML/", item.text())
         print(f"Ruta scheme_file: {scheme_file}")
 
         if not os.path.exists(scheme_file):

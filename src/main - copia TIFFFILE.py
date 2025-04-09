@@ -1,6 +1,3 @@
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 import sys,os
 from os import listdir
 from PySide6 import QtWidgets,QtGui
@@ -11,17 +8,16 @@ import xml.etree.ElementTree as ET
 
 import psd_tools.compression
 import psd_tools.psd
-from ui import *
+from ui.Swiper_UI import *
 from psd_tools.psd import ImageData,image_data
 from psd_tools.compression import compress, decompress
 from psd_tools.constants import Compression
 from psd_tools.psd.base import BaseElement
 from psd_tools.utils import pack, read_fmt, write_bytes, write_fmt
 from psd_tools.validators import in_
-from PIL.Image import *
-from PIL import Image
 import ctypes
-
+import tifffile as tiff
+import numpy as np
 
 
 
@@ -44,7 +40,7 @@ class Aplicacion(QtWidgets.QMainWindow):
             self.ui.setupUi4k(self)
 
         # Obtener la lista de archivos xml en la carpeta
-        self.folder_path = "XML"
+        self.folder_path = "../XML"
         xmlfiles = [f for f in listdir(self.folder_path) if os.path.isfile(os.path.join(self.folder_path, f))]
 
         # Obtener una referencia al objeto list_shemes desde la interfaz de usuario
@@ -107,7 +103,7 @@ class Aplicacion(QtWidgets.QMainWindow):
         new_name, ok_pressed = QtWidgets.QInputDialog.getText(self, "Nuevo Nombre", "Ingrese el nombre del esquema:")
 
         if ok_pressed:
-            folder_path = "XML"
+            folder_path = "../XML"
             new_file = os.path.join(folder_path, new_name + ".xml")
             shutil.copy(base_file, new_file)
             # Mostrar los archivos en el objeto list
@@ -197,7 +193,7 @@ class Aplicacion(QtWidgets.QMainWindow):
         row = selected_indexes[0].row()
         item = self.list_schemes_model.item(row)
         print(f"Numero fila lista xml: {row}")
-        scheme_file = os.path.join("XML/", item.text())
+        scheme_file = os.path.join("../XML/", item.text())
         print(f"Ruta scheme_file: {scheme_file}")
 
         if not os.path.exists(scheme_file):
@@ -251,6 +247,83 @@ class Aplicacion(QtWidgets.QMainWindow):
 
     ##### Método para procesado de psd/psb ######
     
+    def process_psd(self):
+        psd = psd_tools.PSDImage.open(self.file_path)
+
+        numeroCanales = psd.channels
+        print(f"Numero canales: {numeroCanales}")
+        
+        # Obtiene los datos de imagen (esto incluye todos los canales)
+        image_data = psd.image_data
+
+        # Descomprime y obtiene los datos de píxeles
+        pixel_data = image_data.get_data(psd.header)
+
+        # Si split es True, obtendrás una lista con los datos separados por canales
+        if isinstance(pixel_data, list):
+            for i, channel in enumerate(pixel_data):
+                print(f"Datos del Canal {i}: {list(channel)[:10]}")  # Muestra solo los primeros 10 valores
+        else:
+            print("Los datos no están en formato esperado.")
+
+
+
+
+        
+        listaCanalesOr = []
+
+        datosCanal = psdPil.getdata()
+        
+        print(f"Datos de los canales originales: {list(datosCanal)[:]} ")
+
+        for i in range(numeroCanales):
+            datosCanal = psdPil.getdata(i)
+            print(f"Datos de los canales originales: {list(datosCanal)[:]} ",i," canal")
+            listaCanalesOr.append(list(datosCanal))
+        
+        print(f"Print de listaCanalesOr: {list(listaCanalesOr)[:]}")
+
+        pixelesImagen = psd.height*psd.width
+        print(f"Los pixeles de la imagen son: {pixelesImagen}")
+        
+        ##### Construccion de los canales de salida ########        
+        datosCanalesFinal = []
+        listaPixelesFinal = []
+
+        for i in range(numeroCanales):
+            numeroCanalSalida = int(self.listaCanalesSalida[i])
+            datosCanalSalida = psdPil.getdata(numeroCanalSalida)
+            print(f"Print de datosCanalSalida: {list(datosCanalSalida)[:]} ", i, " canal")
+            datosCanalesFinal.append(datosCanalSalida)
+
+        print("Proceso canales Salida terminado")
+        print(f"Print de datosCanalesFinal: {list(datosCanalesFinal)[:]}")
+        
+        pixel = ()
+
+        for k in range(pixelesImagen):
+            pixel = tuple(datosCanalesFinal[j][k] for j in range(numeroCanales))  # Crea una tupla por cada pixel
+            listaPixelesFinal.append(pixel)  # Agrega la tupla a la lista
+        print("bucle for canales final terminado")
+        tuplaPixelesFinal = tuple(listaPixelesFinal)  # Convierte la lista en tupla
+        print("conversión tupla terminado")
+        print(f"Print de tuplaPixelesFinal: {list(tuplaPixelesFinal)[:]}")
+
+        psdPil.putdata(tuplaPixelesFinal) # Sobreescribe los pixeles del documento abierto en memoria
+        
+        print("Sobreescritura de pixeles finalizada")
+
+        
+                
+        design_output_path = os.path.join(self.output_folder_path, self.design)
+        
+        newPSD = psd.frompil(psdPil,compression=Compression.RAW)      
+        print("conversión from Pil terminado")
+        newPSD.save(design_output_path)
+        print("Archivo guardado correctamente")
+    
+    
+    """
     def process_psd(self):
         psd = psd_tools.PSDImage.open(self.file_path)
 
@@ -311,50 +384,62 @@ class Aplicacion(QtWidgets.QMainWindow):
         newPSD.save(design_output_path)
         print("Archivo guardado correctamente")
         
-    
+    """
     
 
     ######### Método TIF ###########
 
     def process_tif(self):
         
-        tif = Image.open(self.file_path)
-        canales = tif.getbands()
-        numeroCanales = len(canales)
+        print("Versión Tifffile: ",tiff.__version__)
+        # Abre el archivo TIFF
+        tif = tiff.TiffFile(self.file_path)
+        print(f"Número de páginas: {len(tif.pages)}")
         
-        print(f"Numero canales: {numeroCanales}")
-           
+        # Accede a la primera página (si hay varias)
+        pagina = tif.pages[0]
+
+        # Obtiene los datos de la imagen
+        datos_imagen = tif.asarray()
+        print(f"Print de datos_imagen: {(datos_imagen)[:]}")
+        print(f"Forma de datos_imagen: {datos_imagen.shape}")
+        # Verifica el número de canales
+        numeroCanales = pagina.samplesperpixel
+        print(f"Número de canales: {numeroCanales}")
+
+        # Extrae cada canal
+        lista_canales = [datos_imagen[:, :, i] for i in range(numeroCanales)]
+        print(f"Print de lista_canales: {(lista_canales)[:]}")
+
         listaCanalesOr = []
 
-        datosCanal = tif.getdata()
+        for i, canal in enumerate(lista_canales):
+            print(f"Datos del canal {i}: {canal.flatten()[:]}")  # Muestra solo los primeros valores
+            listaCanalesOr.append(canal.flatten().tolist())
+
+        print(f"Print de listaCanalesOr: {(listaCanalesOr)[:]}")
+
+        # Obtiene las dimensiones de la imagen
+        altura, anchura = pagina.shape[:2]
         
-        print(f"Datos de los canales originales: {list(datosCanal)[:]} ")
+        # Calcula el número de píxeles
+        num_pixeles = altura * anchura
 
-
-        for i in range(numeroCanales):
-            datosCanal = tif.getdata(i)
-            print(f"Datos de los canales originales: {list(datosCanal)[:]} ",i," canal")
-            listaCanalesOr.append(list(datosCanal))
-        
-        print(f"Print de listaCanalesOr: {list(listaCanalesOr)[:]}")
-
-        pixelesImagen = tif.height*tif.width
-        print(f"Los pixeles de la imagen son: {pixelesImagen}")
+        print(f'El archivo TIFF tiene {num_pixeles} píxeles.')
         
         ##### Construccion de los canales de salida ########        
         datosCanalesFinal = []
-        listaPixelesFinal = []
-
+        
         for i in range(numeroCanales):
             numeroCanalSalida = int(self.listaCanalesSalida[i])
-            datosCanalSalida = tif.getdata(numeroCanalSalida)
+            datosCanalSalida = listaCanalesOr[numeroCanalSalida]
             print(f"Print de datosCanalSalida: {list(datosCanalSalida)[:]} ", i, " canal")
             datosCanalesFinal.append(datosCanalSalida)
 
         print("Proceso canales Salida terminado")
         print(f"Print de datosCanalesFinal: {list(datosCanalesFinal)[:]}")
-
-
+       
+        
         """
         # Método para crear los píxeles finales en vez de bucle anidado
         def generar_pixeles():
@@ -366,33 +451,45 @@ class Aplicacion(QtWidgets.QMainWindow):
         psdPil.putdata(tuple(generar_pixeles()))
         print("putdata terminado")
         """
+        listaPixelesFinal = []
+        pixel = []
 
-
-        pixel = ()
-
-        for k in range(pixelesImagen):
-            pixel = tuple(datosCanalesFinal[j][k] for j in range(numeroCanales))  # Crea una tupla por cada pixel
-            listaPixelesFinal.append(pixel)  # Agrega la tupla a la lista
+        for k in range(num_pixeles):
+            pixel = [datosCanalesFinal[j][k] for j in range(numeroCanales)]  # Crea un array por cada pixel
+            listaPixelesFinal.append(pixel)  # Agrega el array a la lista/array
         print("bucle for canales final terminado")
-        tuplaPixelesFinal = tuple(listaPixelesFinal)  # Convierte la lista en tupla
-        print("conversión tupla terminado")
-        #print(f"Print de tuplaPixelesFinal: {list(tuplaPixelesFinal)[:]}")
+        print(f"Print de listaPixelesFinal: {list(listaPixelesFinal)[:]}")
+        #tuplaPixelesFinal = tuple(listaPixelesFinal)  # Convierte la lista en tupla
+        #print("conversión tupla terminado")
+        #print(f"Print de listaPixelesFinal: {list(tuplaPixelesFinal)[:]}")
 
-        tif.putdata(tuplaPixelesFinal) # Sobreescribe los pixeles del documento abierto en memoria
-  
-        design_output_path = os.path.join(self.output_folder_path, self.design)
+        # Crear un array vacío para los píxeles finales
+        datos_final = np.zeros((altura, anchura, numeroCanales), dtype=int)
+
+        datos_final = listaPixelesFinal
         
-        tif.save(design_output_path)
+        """
+        # Llenar el array con los datos de cada canal
+        for i in range(anchura):
+            for j in range(altura):
+                for k in range(numeroCanales):
+                    datos_final[i][j][k] = datosCanalesFinal[k][(i * anchura) + j]
+                    #print(f"Print de datos_finales: {(datos_final)[:]}")
+        print(f"Print de datos_finales: {(datos_final)[:]}")
+        """
+        design_output_path = os.path.join(self.output_folder_path, self.design)
+        # Guardar como TIFF interleaved
+        with tiff.TiffWriter(design_output_path) as tif:
+            tif.write(datos_final, photometric='cmyk', extrasamples=[1, 1])
+
+        
+
+        #tiff.imwrite(design_output_path, datos_final)
 
         print("Archivo guardado correctamente")
 
-        tif.close
-
-
-
-
-
-
+        tif.close()
+        
 
 
     ##########################################################
