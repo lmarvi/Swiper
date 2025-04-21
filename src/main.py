@@ -1,321 +1,29 @@
 import sys
 
-
-from PySide6.QtCore import QRect, QSize, Qt
-from PySide6.QtGui import QPixmap, QIcon, QFont
-from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
-    QPushButton, QListWidget, QSpacerItem
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
-
-
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QMainWindow, QApplication
 import creardb
+from ui.swiper_ui import SwiperUI
 
 
-class Swiper(QMainWindow):
+class MainWindow(QMainWindow):
 
     def __init__(self):
+
         # creardb.Crear_db.crear_db_si_no_exite()
 
         super().__init__()
 
         self.setWindowTitle("Swiper")
         self.setGeometry(100, 100, 1500, 850)
-        spacer = QSpacerItem(120, 35,
-                             QSizePolicy.Fixed,
-                             QSizePolicy.Minimum
-                             )
+        self.setCentralWidget(SwiperUI())
+
         # Icono de la ventana
-        icon = QIcon()
-        icon.addFile("../img/Logo.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.setWindowIcon(icon)
+        logo = QIcon()
+        logo.addFile("../img/Logo.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.setWindowIcon(logo)
 
-        # Widget principal y layout
-        self.main_widget = QWidget()
-        self.setCentralWidget(self.main_widget)
-
-        self.main_widget.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.main_layout = QVBoxLayout()
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(10)
-        self.main_widget.setLayout(self.main_layout)
-
-        # Layout superior con logo y título
-        self.layout_titulo = QHBoxLayout()
-        self.layout_titulo.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.addLayout(self.layout_titulo)
-
-        # Logo
-        self.frame_logo = QFrame()
-        self.frame_logo.setFrameShape(QFrame.NoFrame)
-        self.logo_swiper = QLabel()
-        self.logo_swiper.setPixmap(QPixmap("../img/Logo.png"))
-        self.logo_swiper.setScaledContents(True)
-        self.logo_swiper.setFixedSize(75, 75)
-        self.frame_logo_layout = QVBoxLayout()
-        self.frame_logo_layout.setContentsMargins(25, 0, 0, 0)
-        self.frame_logo_layout.addWidget(self.logo_swiper, alignment=Qt.AlignTop)
-        self.frame_logo.setLayout(self.frame_logo_layout)
-        self.layout_titulo.addWidget(self.frame_logo, alignment=Qt.AlignTop)
-
-        # Contenedor para el título con margen para la sombra
-        self.container_titulo = QFrame()
-        # El contenedor es más grande para permitir que se vea la sombra
-        self.container_titulo.setFixedSize(280, 100)
-        self.container_titulo.setStyleSheet("background-color: transparent;")
-
-        container_layout = QVBoxLayout(self.container_titulo)
-        container_layout.setContentsMargins(0, 0, 0, 0)  # Margen para que se vea la sombra
-
-        # Frame del título
-        self.frame_titulo = QFrame()
-        self.frame_titulo.setFixedSize(210, 60)
-        self.frame_titulo.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                border-radius: 24px;
-                color: #212121;
-            }
-        """)
-
-        # Configurar efecto de sombra
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(20)
-        shadow.setOffset(4, 4)
-        shadow.setColor(Qt.black)
-        self.frame_titulo.setGraphicsEffect(shadow)
-
-        # Label del título centrado dentro del frame
-        self.label_titulo = QLabel("SWIPER", self.frame_titulo)
-        self.label_titulo.setAlignment(Qt.AlignCenter)
-
-        font_titulo = QFont("Segoe UI", 24, QFont.Weight.Bold)
-        self.label_titulo.setFont(font_titulo)
-
-        self.titulo_centrado_layout = QVBoxLayout(self.frame_titulo)
-        self.titulo_centrado_layout.setContentsMargins(0, 0, 0, 0)
-        self.titulo_centrado_layout.addWidget(self.label_titulo, alignment=Qt.AlignCenter)
-
-        # Añadir el frame del título al contenedor
-        container_layout.addWidget(self.frame_titulo, alignment=Qt.AlignCenter)
-
-        # Añadir expansores para centrar
-        self.layout_titulo.addStretch()
-
-
-        self.layout_titulo.addWidget(self.container_titulo)
-        self.layout_titulo.addStretch()
-
-        ####### Layout Botones #######
-        self.layout_menu = QHBoxLayout()
-        self.layout_menu.setContentsMargins(0, 0, 0, 0)
-        self.layout_menu.setSpacing(10)
-        self.frame_menu = QFrame()
-        self.frame_menu.setFixedHeight(65)
-        self.frame_menu.setFrameShape(QFrame.NoFrame)
-        self.frame_menu.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                color: #212121;
-            }""")
-        self.frame_menu.setGraphicsEffect(shadow)
-
-        self.layout_botones_menu = QHBoxLayout(self.frame_menu)
-        self.layout_botones_menu.setContentsMargins(0, 0, 0, 0)
-        self.layout_botones_menu.setSpacing(0)
-        self.layout_menu.addLayout(self.layout_botones_menu)
-        self.frame_menu.setLayout(self.layout_botones_menu)
-        self.main_layout.addWidget(self.frame_menu)
-
-            ####### Botones #######
-        self.frame_menu_interno = QFrame()
-        self.frame_menu_interno.setFixedSize(800, 50)
-        self.frame_menu_interno.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                color: #212121;
-            }""")
-
-        self.layout_interno_botones = QHBoxLayout()
-        self.layout_interno_botones.setContentsMargins(10, 10, 10, 10)
-        self.layout_interno_botones.setSpacing(100)
-        self.layout_interno_botones.setAlignment(Qt.AlignCenter)
-        self.frame_menu_interno.setLayout(self.layout_interno_botones)
-        self.layout_botones_menu.addWidget(self.frame_menu_interno)
-
-            ###### Botones ######
-        self.boton_anadir_esquema = QPushButton("Añadir esquema")
-        self.layout_interno_botones.addWidget(self.boton_anadir_esquema, alignment=Qt.AlignCenter)
-        self.boton_anadir_esquema.setFixedSize(120,30)
-        #self.boton_anadir_esquema.clicked.connect(self.anadir_esquema)
-
-        self.boton_editar_esquema = QPushButton("Editar esquema")
-        self.layout_interno_botones.addWidget(self.boton_editar_esquema, alignment=Qt.AlignCenter)
-        self.boton_editar_esquema.setFixedSize(120,30)
-        #self.boton_editar_esquema.clicked.connect(self.editar_esquema)
-
-        self.boton_eliminar_esquema = QPushButton("Eliminar esquema")
-        self.layout_interno_botones.addWidget(self.boton_eliminar_esquema, alignment=Qt.AlignCenter)
-        self.boton_eliminar_esquema.setFixedSize(120,30)
-        #self.boton_eliminar_esquema.clicked.connect(self.eliminar_esquema)
-
-        self.boton_configuracion = QPushButton("Configuracion")
-        self.layout_interno_botones.addWidget(self.boton_configuracion, alignment=Qt.AlignCenter)
-        self.boton_configuracion.setFixedSize(120,30)
-        #self.boton_configuracion.clicked.connect(self.configurar)
-
-        ####### Layout Canales y Procesado ########
-
-        self.main_layout_canales = QVBoxLayout()
-        self.main_layout_canales.setContentsMargins(0, 0, 0, 20)
-        self.main_layout_canales.setSpacing(0)
-        self.main_layout.addLayout(self.main_layout_canales)
-        self.frame_blanco_canales = QFrame()
-        self.frame_blanco_canales.setFixedHeight(550)
-        self.frame_blanco_canales.setFrameShape(QFrame.NoFrame)
-        self.frame_blanco_canales.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                color: #212121;
-            }""")
-        self.frame_blanco_canales.setGraphicsEffect(shadow)
-
-
-        self.layout_general_canales = QHBoxLayout(self.frame_blanco_canales)
-        self.main_layout_canales.addLayout(self.layout_general_canales)
-        self.frame_blanco_canales.setLayout(self.layout_general_canales)
-        self.main_layout.addWidget(self.frame_blanco_canales)
-
-        self.layout_contenedor_esquemas = QHBoxLayout()
-        self.layout_contenedor_esquemas.setSpacing(30)
-        self.layout_general_canales.addLayout(self.layout_contenedor_esquemas)
-        self.layout_contenedor_entrada = QVBoxLayout()
-        self.layout_contenedor_entrada.setSpacing(30)
-        self.layout_general_canales.addLayout(self.layout_contenedor_entrada)
-        self.layout_contenedor_salida = QVBoxLayout()
-        self.layout_contenedor_salida.setSpacing(30)
-        self.layout_general_canales.addLayout(self.layout_contenedor_salida)
-        self.layout_contenedor_procesado = QVBoxLayout()
-        self.layout_contenedor_procesado.setSpacing(30)
-        self.layout_general_canales.addLayout(self.layout_contenedor_procesado)
-
-        self.layout_layouts_esquemas = QVBoxLayout()
-        self.layout_layouts_esquemas.setAlignment(Qt.AlignCenter)
-        self.layout_contenedor_esquemas.addLayout(self.layout_layouts_esquemas)
-        self.layout_layouts_esquemas.setSpacing(5)
-
-        self.layout_layouts_entrada = QVBoxLayout()
-        self.layout_layouts_entrada.setAlignment(Qt.AlignCenter)
-        self.layout_contenedor_esquemas.addLayout(self.layout_layouts_entrada)
-        self.layout_layouts_entrada.setSpacing(5)
-
-        self.layout_layouts_salida = QVBoxLayout()
-        self.layout_layouts_salida.setAlignment(Qt.AlignCenter)
-        self.layout_contenedor_esquemas.addLayout(self.layout_layouts_salida)
-        self.layout_layouts_salida.setSpacing(5)
-
-        self.layout_layouts_procesado = QVBoxLayout()
-        self.layout_layouts_procesado.setAlignment(Qt.AlignCenter)
-        self.layout_contenedor_esquemas.addLayout(self.layout_layouts_procesado)
-        self.layout_layouts_procesado.setSpacing(5)
-
-        ###### COLUMNA ESQUEMAS ######
-        self.label_esquemas = QLabel("Esquemas")
-        self.layout_layouts_esquemas.addWidget(self.label_esquemas)
-        self.label_esquemas.setAlignment(Qt.AlignCenter)
-        self.label_esquemas.setStyleSheet("color: #828282;")
-        self.layout_esquemas_draganddrop = QVBoxLayout()
-        self.frame_esquemas_contenedor = QFrame()
-        self.frame_esquemas_contenedor.setFixedSize(300, 450)
-        self.frame_esquemas_contenedor.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                border: 2px solid #ebebeb;
-                border-radius: 24px;
-            }""")
-        self.frame_esquemas_contenedor.setLayout(self.layout_esquemas_draganddrop)
-        self.layout_layouts_esquemas.addWidget(self.frame_esquemas_contenedor)
-        self.boton_guardar = QPushButton("Guardar")
-        self.layout_layouts_esquemas.addWidget(self.boton_guardar, alignment=Qt.AlignCenter)
-        self.boton_guardar.setFixedSize(120,30)
-        #self.boton_guardar.clicked.connect(self.guardar)
-
-        ###### COLUMNA ENTRADA ######
-        self.label_entrada = QLabel("Entrada")
-        self.layout_layouts_entrada.addWidget(self.label_entrada)
-        self.label_entrada.setAlignment(Qt.AlignCenter)
-        self.label_entrada.setStyleSheet("color: #828282;")
-        self.layout_entrada_draganddrop = QVBoxLayout()
-        self.frame_entrada_contenedor = QFrame()
-        self.frame_entrada_contenedor.setFixedSize(300, 450)
-        self.frame_entrada_contenedor.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                border: 2px solid #ebebeb;
-                border-radius: 24px;
-            }""")
-        self.frame_entrada_contenedor.setLayout(self.layout_entrada_draganddrop)
-        self.layout_layouts_entrada.addWidget(self.frame_entrada_contenedor)
-        self.boton_anadir = QPushButton("Añadir")
-        self.boton_quitar = QPushButton("Quitar")
-        self.boton_anadir.setFixedSize(120, 30)
-        self.boton_quitar.setFixedSize(120, 30)
-        botones_entrada_h = QHBoxLayout()
-        botones_entrada_h.setContentsMargins(0, 0, 0, 0)
-        botones_entrada_h.setSpacing(10)
-        botones_entrada_h.addWidget(self.boton_anadir)
-        botones_entrada_h.addWidget(self.boton_quitar)
-        self.layout_layouts_entrada.addLayout(botones_entrada_h)
-        #self.boton_anadir.clicked.connect(self.guardar)
-        #self.boton_quitar.clicked.connect(self.guardar)
-
-        ###### COLUMNA SALIDA ######
-        self.label_salida = QLabel("Salida")
-        self.layout_layouts_salida.addWidget(self.label_salida)
-        self.label_salida.setAlignment(Qt.AlignCenter)
-        self.label_salida.setStyleSheet("color: #828282;")
-        self.layout_salida_draganddrop = QVBoxLayout()
-        self.frame_salida_contenedor = QFrame()
-        self.frame_salida_contenedor.setFixedSize(300, 450)
-        self.frame_salida_contenedor.setStyleSheet("""
-            QFrame {
-                background-color: #FFFFFF;
-                border: 2px solid #ebebeb;
-                border-radius: 24px;
-            }""")
-        self.frame_salida_contenedor.setLayout(self.layout_esquemas_draganddrop)
-        self.layout_layouts_salida.addWidget(self.frame_salida_contenedor)
-        self.layout_layouts_salida.addItem(
-            QSpacerItem(0, 30, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        )
-
-        ###### COLUMNA PROCESADO ######
-        self.label_procesado = QLabel("Procesado")
-        self.layout_layouts_procesado.addWidget(self.label_procesado)
-        self.label_procesado.setAlignment(Qt.AlignCenter)
-        self.label_procesado.setStyleSheet("color: #828282;")
-        self.layout_procesado_draganddrop = QVBoxLayout()
-        self.frame_procesado_contenedor = QFrame()
-        self.frame_procesado_contenedor.setFixedSize(300, 450)
-        self.frame_procesado_contenedor.setStyleSheet("""
-            QFrame {
-                        background-color: #FFFFFF;
-                        border: 2px solid #ebebeb;
-                        border-radius: 24px;
-                    }""")
-        self.frame_procesado_contenedor.setLayout(self.layout_procesado_draganddrop)
-        self.layout_layouts_procesado.addWidget(self.frame_procesado_contenedor)
-        self.boton_procesar = QPushButton("Procesar")
-        self.boton_quitar_proc = QPushButton("Quitar")
-        self.boton_procesar.setFixedSize(120, 30)
-        self.boton_quitar_proc.setFixedSize(120, 30)
-        botones_entrada_h2 = QHBoxLayout()
-        botones_entrada_h2.setContentsMargins(0, 0, 0, 0)
-        botones_entrada_h2.setSpacing(10)
-        botones_entrada_h2.addWidget(self.boton_procesar)
-        botones_entrada_h2.addWidget(self.boton_quitar_proc)
-        self.layout_layouts_procesado.addLayout(botones_entrada_h2)
-        # self.boton_procesar.clicked.connect(self.guardar)
-        # self.boton_quitar_proc.clicked.connect(self.guardar)
 
 
 
@@ -329,6 +37,6 @@ class Swiper(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = Swiper()
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())
