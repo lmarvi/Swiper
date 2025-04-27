@@ -4,7 +4,6 @@ class CrearDBController:
 
     # Controlador para inicializar la base de datos al arrancar la aplicación.
 
-
     def inicializar(self):
         try:
             CrearDB.crear_db_si_no_existe()

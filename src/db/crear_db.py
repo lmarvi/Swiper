@@ -1,43 +1,39 @@
 from .conexion_db import ConexionDB
+from src.config.conexion_db_config import DB_CONFIG
 
-DB_NAME     = "swiper"
-DB_USER     = "postgres"
-DB_PASSWORD = "1234"
-DB_HOST     = "localhost"
-DB_PORT     = 5432
+dbname = DB_CONFIG["dbname"]
 
 class CrearDB:
 
     @staticmethod
     def crear_db_si_no_existe():
-        admin_conn = ConexionDB(
-            host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-            dbname="postgres", port=DB_PORT, autocommit=True
-        ).conectar()
+
+        conn = ConexionDB(autocommit=True)
+        conn.dbname = "postgres"
+        conn.conectar()
 
         try:
-            with admin_conn.cursor() as cursor:
+            with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,)
+                    "SELECT 1 FROM pg_database WHERE datname = %s", (dbname,)
                 )
                 exists = cursor.fetchone()
                 if not exists:
                     print("Creando database...")
-                    cursor.execute(f'CREATE DATABASE "{DB_NAME}";')
-                    print(f"Base de datos {DB_NAME} creada")
+                    cursor.execute(f'CREATE DATABASE "{dbname}";')
+                    print(f"Base de datos {dbname} creada")
                 else:
                     print("La base de datos ya existe")
-        finally:
-            admin_conn.close()
+        except Exception as e:
+            print(f"Error en la creación de la db: {e}")
+            return None
 
         # Ahora conectamos a la DB y creamos tablas
-        app_conn = ConexionDB(
-            host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-            dbname=DB_NAME, port=DB_PORT, autocommit=True
-        ).conectar()
+        conn = ConexionDB(autocommit=True)
+        conn.conectar()
 
         try:
-            with app_conn.cursor() as cursor:
+            with conn.cursor() as cursor:
                 # Tabla usuarios
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS public.usuarios (
@@ -105,4 +101,4 @@ class CrearDB:
                     print("Usuario admin ya existe")
 
         finally:
-            app_conn.close()
+            conn.desconectar()

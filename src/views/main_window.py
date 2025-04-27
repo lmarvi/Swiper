@@ -3,14 +3,11 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 from src.ui.ui import SwiperUI
 from src.controllers.main_controller import MainController
-from ..controllers.crear_db_controller import CrearDBController
+
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
-
-        crear_db = CrearDBController()
-        crear_db.inicializar()
 
         super().__init__()
 

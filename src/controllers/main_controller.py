@@ -1,5 +1,3 @@
-from tkinter.messagebox import YESNO
-
 from PySide6.QtWidgets import QInputDialog, QMessageBox
 
 from src.widgets.boton_canal import Boton_canal
