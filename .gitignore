@@ -27,3 +27,15 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Entorno virtual
+venv/
+.venv/
+
+# Archivos de IDE o sistema
+__pycache__/
+*.pyc
+.DS_Store
+
+# OneDrive
+~$*
