@@ -35,14 +35,22 @@ class ConexionDB:
             self._conn.close()
             self._conn = None
 
-    def ejecutar_consulta(self, query: str, params: tuple = ()):
+    def consulta_rol(self, usuario):
 
-        with self._conn.cursor() as cursor:
-            cursor.execute(query, params)
-            try:
-                return cursor.fetchall()
-            except psycopg2.ProgrammingError:
-                return None
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT rol FROM usuarios WHERE nombre = %s",
+                    (usuario,)
+                )
+                rol = cursor.fetchone()
+                if rol:
+                    return rol[0]
+                else:
+                    return None
+        except Exception as e:
+            print(f"Error en la consulta del rol: {e}")
+            return None
 
     def consulta_login(self, usuario, contrasena):
         try:

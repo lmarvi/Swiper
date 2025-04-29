@@ -1,13 +1,14 @@
 from PIL.ImageQt import QPixmap
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFrame, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QFrame, QGraphicsDropShadowEffect, \
+    QComboBox
 from ..controllers.crear_db_controller import CrearDBController
 
 class LoginWindow(QWidget):
     def __init__(self):
         crear_db = CrearDBController()
-        crear_db.inicializar()
+        crear_db.inicializar_db()
 
         super().__init__()
 
@@ -27,7 +28,7 @@ class LoginWindow(QWidget):
 
         frame_layout = QVBoxLayout()
         frame = QFrame()
-        frame.setFixedSize(180, 150)
+        frame.setFixedSize(180, 180)
         frame.setStyleSheet("""
                 QFrame {
                     background-color: #FFFFFF;
@@ -45,7 +46,8 @@ class LoginWindow(QWidget):
 
         edits_layout = QVBoxLayout()
         frame_layout.addLayout(edits_layout)
-        edits_layout.setContentsMargins(5,20,5,0)
+        edits_layout.setContentsMargins(5,10,5,0)
+
 
         boton_layout = QVBoxLayout()
         frame_layout.addLayout(boton_layout)
@@ -62,13 +64,19 @@ class LoginWindow(QWidget):
         logo_layout.setContentsMargins(0,10,0,20)
 
         self.usuario_edit = QLineEdit()
+        self.usuario_edit.setFixedSize(150,30)
         edits_layout.addWidget(self.usuario_edit, alignment=Qt.AlignCenter)
         self.usuario_edit.setPlaceholderText("Usuario")
 
 
         self.contrasena_edit = QLineEdit()
+        self.contrasena_edit.setFixedSize(150, 30)
         edits_layout.addWidget(self.contrasena_edit, alignment=Qt.AlignCenter)
         self.contrasena_edit.setPlaceholderText("Contraseña")
+
+        self.accesos_combobox = QComboBox()
+        self.accesos_combobox.setFixedSize(150, 30)
+        edits_layout.addWidget(self.accesos_combobox)
 
         self.boton_login = QPushButton("Login")
         boton_layout.addWidget(self.boton_login, alignment=Qt.AlignCenter)

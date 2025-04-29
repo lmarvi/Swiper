@@ -1,11 +1,15 @@
-from PySide6.QtWidgets import QInputDialog, QMessageBox
+from tkinter.messagebox import YESNO
 
+from PySide6.QtWidgets import QInputDialog, QMessageBox, QComboBox, QDialog, QTableWidgetItem
+from ..views.main_window import MainWindow
 from src.widgets.boton_canal import Boton_canal
 
 
-class MainController:
+class MainWindowController:
     def __init__(self,view):
         self.view = view
+
+
 
 
     def anadir_esquema(self):
@@ -57,3 +61,22 @@ class MainController:
 
         btn.setParent(None)
         btn.deleteLater()
+
+    def anadir_entrada(self):
+        btn = self.view.grupo_entrada.checkedButton()
+
+        colores_combo = QComboBox()
+        colores_combo.addItems(["Amarillo","Azul","Beige","Cian","Naranja","Marron","Rosa","Turquesa","Verde"])
+        window = QDialog(colores_combo)
+        window.show()
+
+    def load_users(self, users_list):
+        """
+        Rellena la tabla con una lista de tuplas o dicts: [(id, nombre, pass, rol, fecha), ...]
+        """
+
+        self.view.tabla_usuarios.setRowCount(len(users_list))
+        for row, user in enumerate(users_list):
+            for col, value in enumerate(user):
+                item = QTableWidgetItem(str(value))
+                self.view.tabla_usuarios.setItem(row, col, item)

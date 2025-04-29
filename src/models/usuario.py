@@ -18,12 +18,5 @@ class Usuario:
         self.rol = rol
         self.fecha_creacion = fecha_creacion
 
-    def es_admin(self) -> bool:
-        return self.rol.lower() == "admin"
-
-    def iniciar_sesion(self, nombre_usuario, contrasena) -> bool:
-        # lógica para comprobar el usuario y contraseña
-        return self.contrasena == contrasena
-
 
 

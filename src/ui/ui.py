@@ -1,21 +1,22 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
-    QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup
+    QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget
 
 from src.widgets.boton_canal import Boton_canal
 
 
 class SwiperUI(QWidget):
 
-    def __init__(self):
+    def __init__(self,esAdmin):
         super().__init__()
         self.grupo_canales = QButtonGroup(self)  # Definir aquí para que sea accesible en toda la clase
         self.grupo_canales.setExclusive(True)
 
-        self.build_ui()
+        self.build_ui(esAdmin)
 
-    def build_ui(self):
+    def build_ui(self,esAdmin):
+        print("👉 build_ui, esAdmin =", esAdmin)
         # Configurar efecto de sombra
         self.shadow_titulo = QGraphicsDropShadowEffect()
         self.shadow_titulo.setBlurRadius(20)
@@ -48,7 +49,7 @@ class SwiperUI(QWidget):
         main_widget.setLayout(self.main_layout)
         main.addWidget(main_widget)
 
-        self.frame_configuracion = self._crear_frame_config()
+        self.frame_configuracion = self._crear_frame_config(esAdmin)
         self.frame_canales = self._crear_frame_canales()
         main.addWidget(self.frame_canales)
         main.addWidget(self.frame_configuracion)
@@ -166,7 +167,7 @@ class SwiperUI(QWidget):
         self.boton_configuracion.setCheckable(True)
         self.boton_configuracion.toggled.connect(self._on_toggle_config)
 
-    def _crear_frame_config(self):
+    def _crear_frame_config(self,esAdmin):
         main_layout_configuracion = QVBoxLayout()
         main_layout_configuracion.setContentsMargins(0, 0, 0, 30)
         main_layout_configuracion.setSpacing(0)
@@ -181,10 +182,18 @@ class SwiperUI(QWidget):
                                             }""")
         frame_blanco_configuracion.setGraphicsEffect(self.shadow_conf)
 
-        layout_general_configuracion = QHBoxLayout(frame_blanco_configuracion)
-        main_layout_configuracion.addLayout(layout_general_configuracion)
-        frame_blanco_configuracion.setLayout(layout_general_configuracion)
+        self.layout_general_configuracion = QHBoxLayout(frame_blanco_configuracion)
+        main_layout_configuracion.addLayout(self.layout_general_configuracion)
+        frame_blanco_configuracion.setLayout(self.layout_general_configuracion)
         self.main_layout.addWidget(frame_blanco_configuracion)
+
+        print("_crear_frame_config, esAdmin =", esAdmin)
+
+        if esAdmin:
+            self._frame_config_admin()
+        else:
+            self._frame_config()
+
         return frame_blanco_configuracion
 
     def _crear_frame_canales(self):
@@ -260,9 +269,9 @@ class SwiperUI(QWidget):
         frame_esquemas_contenedor.setLayout(self.layout_esquemas_draganddrop)
         layout_layouts_esquemas.addWidget(frame_esquemas_contenedor)
 
-        boton_guardar = QPushButton("Guardar")
-        layout_layouts_esquemas.addWidget(boton_guardar, alignment=Qt.AlignCenter)
-        boton_guardar.setFixedSize(120, 30)
+        self.boton_guardar = QPushButton("Guardar")
+        layout_layouts_esquemas.addWidget(self.boton_guardar, alignment=Qt.AlignCenter)
+        self.boton_guardar.setFixedSize(120, 30)
         # boton_guardar.clicked.connect(guardar)
 
         ###### COLUMNA ENTRADA ######
@@ -281,18 +290,18 @@ class SwiperUI(QWidget):
                                 }""")
         frame_entrada_contenedor.setLayout(layout_entrada_draganddrop)
         layout_layouts_entrada.addWidget(frame_entrada_contenedor)
-        boton_anadir = QPushButton("Añadir")
-        boton_quitar = QPushButton("Quitar")
-        boton_anadir.setFixedSize(120, 30)
-        boton_quitar.setFixedSize(120, 30)
+        self.boton_anadir_entrada = QPushButton("Añadir")
+        self.boton_quitar_entrada = QPushButton("Quitar")
+        self.boton_anadir_entrada.setFixedSize(120, 30)
+        self.boton_quitar_entrada.setFixedSize(120, 30)
         botones_entrada_h = QHBoxLayout()
         botones_entrada_h.setContentsMargins(0, 0, 0, 0)
         botones_entrada_h.setSpacing(10)
-        botones_entrada_h.addWidget(boton_anadir)
-        botones_entrada_h.addWidget(boton_quitar)
+        botones_entrada_h.addWidget(self.boton_anadir_entrada)
+        botones_entrada_h.addWidget(self.boton_quitar_entrada)
         layout_layouts_entrada.addLayout(botones_entrada_h)
-        # boton_anadir.clicked.connect(self.guardar_color)
-        # boton_quitar.clicked.connect(self.quitar_color)
+        # self.boton_anadir.clicked.connect(self.guardar_color)
+        # self.boton_quitar.clicked.connect(self.quitar_color)
 
         ###### COLUMNA SALIDA ######
         label_salida = QLabel("Salida")
@@ -330,22 +339,17 @@ class SwiperUI(QWidget):
                                         }""")
         frame_procesado_contenedor.setLayout(layout_procesado_draganddrop)
         layout_layouts_procesado.addWidget(frame_procesado_contenedor)
-        boton_procesar = QPushButton("Procesar")
-        boton_quitar_proc = QPushButton("Quitar")
-        boton_procesar.setFixedSize(120, 30)
-        boton_quitar_proc.setFixedSize(120, 30)
+        self.boton_procesar = QPushButton("Procesar")
+        self.boton_quitar_proc = QPushButton("Quitar")
+        self.boton_procesar.setFixedSize(120, 30)
+        self.boton_quitar_proc.setFixedSize(120, 30)
         botones_entrada_h2 = QHBoxLayout()
         botones_entrada_h2.setContentsMargins(0, 0, 0, 0)
         botones_entrada_h2.setSpacing(10)
-        botones_entrada_h2.addWidget(boton_procesar)
-        botones_entrada_h2.addWidget(boton_quitar_proc)
+        botones_entrada_h2.addWidget(self.boton_procesar)
+        botones_entrada_h2.addWidget(self.boton_quitar_proc)
         layout_layouts_procesado.addLayout(botones_entrada_h2)
-        # boton_procesar.clicked.connect(guardar)
-        # boton_quitar_proc.clicked.connect(guardar)
 
-        # ButtonGroup para los esquemas nuevos
-        self.grupo_canales = QButtonGroup(self)
-        self.grupo_canales.setExclusive(True)
 
         # Layout para los esquemas
         self.layout_canales = QHBoxLayout()
@@ -367,3 +371,122 @@ class SwiperUI(QWidget):
         else:
             self.frame_configuracion.hide()
             self.frame_canales.show()
+
+    def _frame_config_admin(self):
+
+        config_layout = QHBoxLayout()
+        self.layout_general_configuracion.addLayout(config_layout)
+
+        # Primera columna: ajustes básicos
+
+        primera_columna_layout = QVBoxLayout()
+        config_layout.addLayout(primera_columna_layout)
+
+        ip_label = QLabel("IP Servidor:")
+        primera_columna_layout.addWidget(ip_label)
+        ip_label.setContentsMargins(5,0,0,0)
+
+        self.ip_text = QLineEdit()
+        primera_columna_layout.addWidget(self.ip_text)
+        self.ip_text.setFixedSize(200,30)
+        self.ip_text.setEnabled(False)
+
+        ruta_salida_label = QLabel("Carpeta de salida:")
+        primera_columna_layout.addWidget(ruta_salida_label)
+        self.ruta_salida_text = QLineEdit()
+        primera_columna_layout.addWidget(self.ruta_salida_text)
+        self.ruta_salida_text.setEnabled(False)
+        self.ruta_salida_text.setFixedSize(250,30)
+
+        self.boton_carpeta_salida = QPushButton("Carpeta de salida")
+        primera_columna_layout.addWidget(self.boton_carpeta_salida)
+        self.boton_carpeta_salida.setFixedSize(120, 30)
+
+        # Segunda columna: tabla de usuarios
+        segunda_columna_layout = QVBoxLayout()
+        config_layout.addLayout(segunda_columna_layout)
+
+        label_usuarios = QLabel("Usuarios")
+        label_usuarios.setAlignment(Qt.AlignCenter)
+        label_usuarios.setStyleSheet("font-weight: bold; color: #212121;")
+        segunda_columna_layout.addWidget(label_usuarios)
+
+        self.tabla_usuarios = QTableWidget()
+        self.tabla_usuarios.setColumnCount(5)
+        cabecera = ["id", "Nombre", "Contraseña", "Rol", "Fecha creacion usuario"]
+        self.tabla_usuarios.setHorizontalHeaderLabels(cabecera)
+        self.tabla_usuarios.horizontalHeader().setStretchLastSection(True)
+        self.tabla_usuarios.setSelectionBehavior(QTableWidget.SelectRows)
+        self.tabla_usuarios.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabla_usuarios.setAlternatingRowColors(True)
+        segunda_columna_layout.addWidget(self.tabla_usuarios)
+
+        layout_botones_usuarios = QHBoxLayout()
+        segunda_columna_layout.addLayout(layout_botones_usuarios)
+
+        self.boton_anadir_usuario = QPushButton("Añadir usuario")
+        self.boton_editar_usuario = QPushButton("Editar usuario")
+        self.boton_eliminar_usuario = QPushButton("Eliminar usuario")
+        layout_botones_usuarios.addWidget(self.boton_anadir_usuario)
+        layout_botones_usuarios.addWidget(self.boton_editar_usuario)
+        layout_botones_usuarios.addWidget(self.boton_eliminar_usuario)
+        self.boton_anadir_usuario.setFixedSize(120,30)
+        self.boton_editar_usuario.setFixedSize(120, 30)
+        self.boton_eliminar_usuario.setFixedSize(120, 30)
+
+        label_usuarios = QLabel("Accesos")
+        label_usuarios.setAlignment(Qt.AlignCenter)
+        label_usuarios.setStyleSheet("font-weight: bold; color: #212121;")
+        segunda_columna_layout.addWidget(label_usuarios)
+
+        self.tabla_accesos = QTableWidget()
+        self.tabla_accesos.setColumnCount(5)
+        cabecera = ["id", "Nombre", "Accesos", "Fecha creación acceso"]
+        self.tabla_accesos.setHorizontalHeaderLabels(cabecera)
+        self.tabla_accesos.horizontalHeader().setStretchLastSection(True)
+        self.tabla_accesos.setSelectionBehavior(QTableWidget.SelectRows)
+        self.tabla_accesos.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabla_accesos.setAlternatingRowColors(True)
+        segunda_columna_layout.addWidget(self.tabla_accesos)
+
+        layout_botones_accesos = QHBoxLayout()
+        segunda_columna_layout.addLayout(layout_botones_accesos)
+
+        self.boton_anadir_acceso = QPushButton("Añadir acceso")
+        layout_botones_accesos.addWidget(self.boton_anadir_acceso)
+        self.boton_anadir_acceso.setFixedSize(120, 30)
+
+        self.boton_editar_acceso = QPushButton("Editar acceso")
+        layout_botones_accesos.addWidget(self.boton_editar_acceso)
+        self.boton_editar_acceso.setFixedSize(120, 30)
+
+        self.boton_eliminar_acceso = QPushButton("Eliminar acceso")
+        layout_botones_accesos.addWidget(self.boton_eliminar_acceso)
+        self.boton_eliminar_acceso.setFixedSize(120, 30)
+
+
+
+    def _frame_config(self):
+
+        config_layout = QVBoxLayout()
+        self.layout_general_configuracion.addLayout(config_layout)
+
+        ip_label = QLabel("IP Servidor:")
+        config_layout.addWidget(ip_label)
+        ip_label.setContentsMargins(5, 0, 0, 0)
+
+        self.ip_text = QLineEdit()
+        config_layout.addWidget(self.ip_text)
+        self.ip_text.setFixedSize(200, 30)
+        self.ip_text.setEnabled(False)
+
+        ruta_salida_label = QLabel("Carpeta de salida:")
+        config_layout.addWidget(ruta_salida_label)
+        self.ruta_salida_text = QLineEdit()
+        config_layout.addWidget(self.ruta_salida_text)
+        self.ruta_salida_text.setEnabled(False)
+        self.ruta_salida_text.setFixedSize(250, 30)
+
+        self.boton_carpeta_salida = QPushButton("Carpeta de salida")
+        config_layout.addWidget(self.boton_carpeta_salida)
+        self.boton_carpeta_salida.setFixedSize(120, 30)

@@ -2,7 +2,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 from src.ui.ui import SwiperUI
-from src.controllers.main_controller import MainController
+from src.controllers.main_window_controller import MainWindowController
 
 
 class MainWindow(QMainWindow):
@@ -11,14 +11,8 @@ class MainWindow(QMainWindow):
 
         super().__init__()
 
-        self.ui = SwiperUI()
-        self.setCentralWidget(self.ui)
-
         self.setWindowTitle("Swiper")
-        self.setGeometry(100, 100, 1500, 850)
-
-        # Instancia del controlador
-        self._controller = MainController(self.ui)
+        self.setGeometry(200, 200, 1500, 850)
 
         # Icono de la ventana
         logo = QIcon()
@@ -26,9 +20,18 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(logo)
 
         # Controlador
-        self._controller = MainController(self.ui)
+        self.ui = None
+        self._controller = None
 
-        # Señales
+    def configurar_interfaz(self, esAdmin):
+
+        self.ui = SwiperUI(esAdmin)
+        self.setCentralWidget(self.ui)
+
+        # Configurar el controlador
+        self._controller = MainWindowController(self.ui)
+
+        # Conectar señales
         self.ui.boton_anadir_esquema.clicked.connect(self._controller.anadir_esquema)
         self.ui.boton_editar_esquema.clicked.connect(self._controller.editar_esquema)
         self.ui.boton_eliminar_esquema.clicked.connect(self._controller.eliminar_esquema)
