@@ -65,3 +65,6 @@ class MainWindowController:
         window = QDialog(colores_combo)
         window.show()
 
+
+
+

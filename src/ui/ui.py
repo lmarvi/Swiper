@@ -18,7 +18,7 @@ class SwiperUI(QWidget):
         self.build_ui(esAdmin)
 
     def build_ui(self,esAdmin):
-        print("👉 build_ui, esAdmin =", esAdmin)
+
         # Configurar efecto de sombra
         self.shadow_titulo = QGraphicsDropShadowEffect()
         self.shadow_titulo.setBlurRadius(20)
@@ -188,8 +188,6 @@ class SwiperUI(QWidget):
         main_layout_configuracion.addLayout(self.layout_general_configuracion)
         frame_blanco_configuracion.setLayout(self.layout_general_configuracion)
         self.main_layout.addWidget(frame_blanco_configuracion)
-
-        print("_crear_frame_config, esAdmin =", esAdmin)
 
         if esAdmin:
             self._frame_config_admin()
@@ -375,7 +373,6 @@ class SwiperUI(QWidget):
             self.frame_canales.show()
 
     def _frame_config_admin(self):
-        lista_usuarios = UsuarioService.obtener_usarios()
 
         config_layout = QHBoxLayout()
         self.layout_general_configuracion.addLayout(config_layout)
@@ -503,7 +500,8 @@ class SwiperUI(QWidget):
 
     def cargar_datos_usuarios(self):
         try:
-            lista_usuarios = UsuarioService.obtener_usarios()
+            usuario_service = UsuarioService(self)
+            lista_usuarios = usuario_service.obtener_usarios()
 
             if lista_usuarios:
                 self.cargar_usuarios(lista_usuarios)

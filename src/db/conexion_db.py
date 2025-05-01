@@ -76,3 +76,8 @@ class ConexionDB:
             yield cur
         finally:
             cur.close()
+
+    def commit(self):
+        if self._conn:
+            self._conn.commit()
+

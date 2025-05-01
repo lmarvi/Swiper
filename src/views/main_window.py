@@ -1,6 +1,9 @@
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
+
+from src.controllers.usuario_controller import UsuarioController
+from src.services.usuario_service import UsuarioService
 from src.ui.ui import SwiperUI
 from src.controllers.main_window_controller import MainWindowController
 
@@ -10,7 +13,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
 
         super().__init__()
-
+        self.usuario_service = UsuarioService(self)
         self.setWindowTitle("Swiper")
         self.setGeometry(200, 200, 1500, 850)
 
@@ -21,7 +24,8 @@ class MainWindow(QMainWindow):
 
         # Controlador
         self.ui = None
-        self._controller = None
+        self._controllerMainWindow = None
+        self._controllerUsuario = None
 
     def configurar_interfaz(self, esAdmin):
 
@@ -29,9 +33,22 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.ui)
 
         # Configurar el controlador
-        self._controller = MainWindowController(self.ui)
+        self._controllerMainWindow = MainWindowController(self.ui)
+        self._controllerUsuario = UsuarioController(self.ui)
+
+        # Pasar el servicio al controlador
+        self._controllerUsuario.UsuarioService = self.usuario_service
 
         # Conectar señales
-        self.ui.boton_anadir_esquema.clicked.connect(self._controller.anadir_esquema)
-        self.ui.boton_editar_esquema.clicked.connect(self._controller.editar_esquema)
-        self.ui.boton_eliminar_esquema.clicked.connect(self._controller.eliminar_esquema)
+        self.ui.boton_anadir_esquema.clicked.connect(self._controllerMainWindow.anadir_esquema)
+        self.ui.boton_editar_esquema.clicked.connect(self._controllerMainWindow.editar_esquema)
+        self.ui.boton_eliminar_esquema.clicked.connect(self._controllerMainWindow.eliminar_esquema)
+
+        self.ui.boton_anadir_usuario.clicked.connect(self._controllerUsuario.datos_nuevo_usuario)
+
+    def cerrar_conexion(self, conn):
+        # Cierra recursos antes de cerrar la aplicación
+        if hasattr(self, 'usuario_service'):
+            self.usuario_service.cerrar_conexion()
+        # ...
+        super().closeEvent(conn)

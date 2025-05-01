@@ -70,6 +70,7 @@ class LoginWindow(QWidget):
 
 
         self.contrasena_edit = QLineEdit()
+        self.contrasena_edit.setEchoMode(QLineEdit.Password)
         self.contrasena_edit.setFixedSize(150, 30)
         edits_layout.addWidget(self.contrasena_edit, alignment=Qt.AlignCenter)
         self.contrasena_edit.setPlaceholderText("Contraseña")
