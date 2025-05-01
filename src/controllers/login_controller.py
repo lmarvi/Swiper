@@ -10,7 +10,7 @@ class LoginController:
         self.view = view
         self.view.boton_login.clicked.connect(self.login)
 
-        self.main_window = MainWindow()
+
 
     ## def accesos(self):
 
@@ -32,9 +32,10 @@ class LoginController:
         self.conn = ConexionDB()
         self.conn.conectar()
 
-        if self.conn.consulta_login(self.usuario, self.contrasena):
+        if self.conn.consulta_login(self.usuario,self.contrasena):
             esAdmin = self.es_admin()
             print(f"Usuario {self.usuario} es admin: {esAdmin}")
+            self.main_window = MainWindow()
             self.main_window.configurar_interfaz(esAdmin)
             self.view.close()
             self.main_window.show()

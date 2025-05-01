@@ -65,6 +65,8 @@ class ConexionDB:
             print(f"Error en la consulta del login: {e}")
             return None
 
+
+
     @contextmanager
     def cursor(self):
         if self._conn is None:

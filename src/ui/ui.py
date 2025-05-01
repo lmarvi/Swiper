@@ -1,9 +1,11 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
-    QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget
+    QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget, \
+    QTableWidgetItem
 
-from src.widgets.boton_canal import Boton_canal
+from src.services.usuario_service import UsuarioService
+from src.widgets.boton_canal import BotonCanal
 
 
 class SwiperUI(QWidget):
@@ -358,7 +360,7 @@ class SwiperUI(QWidget):
 
         canales = []
         for texto, color in canales:
-            btn = Boton_canal(texto, color)
+            btn = BotonCanal(texto, color)
             self.grupo_canales.addButton(btn)
             self.layout_canales.addWidget(btn)
 
@@ -373,6 +375,7 @@ class SwiperUI(QWidget):
             self.frame_canales.show()
 
     def _frame_config_admin(self):
+        lista_usuarios = UsuarioService.obtener_usarios()
 
         config_layout = QHBoxLayout()
         self.layout_general_configuracion.addLayout(config_layout)
@@ -420,6 +423,7 @@ class SwiperUI(QWidget):
         self.tabla_usuarios.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabla_usuarios.setAlternatingRowColors(True)
         segunda_columna_layout.addWidget(self.tabla_usuarios)
+        self.cargar_datos_usuarios()
 
         layout_botones_usuarios = QHBoxLayout()
         segunda_columna_layout.addLayout(layout_botones_usuarios)
@@ -453,15 +457,13 @@ class SwiperUI(QWidget):
         segunda_columna_layout.addLayout(layout_botones_accesos)
 
         self.boton_anadir_acceso = QPushButton("Añadir acceso")
-        layout_botones_accesos.addWidget(self.boton_anadir_acceso)
-        self.boton_anadir_acceso.setFixedSize(120, 30)
-
         self.boton_editar_acceso = QPushButton("Editar acceso")
-        layout_botones_accesos.addWidget(self.boton_editar_acceso)
-        self.boton_editar_acceso.setFixedSize(120, 30)
-
         self.boton_eliminar_acceso = QPushButton("Eliminar acceso")
+        layout_botones_accesos.addWidget(self.boton_anadir_acceso)
+        layout_botones_accesos.addWidget(self.boton_editar_acceso)
         layout_botones_accesos.addWidget(self.boton_eliminar_acceso)
+        self.boton_anadir_acceso.setFixedSize(120, 30)
+        self.boton_editar_acceso.setFixedSize(120, 30)
         self.boton_eliminar_acceso.setFixedSize(120, 30)
 
 
@@ -490,3 +492,22 @@ class SwiperUI(QWidget):
         self.boton_carpeta_salida = QPushButton("Carpeta de salida")
         config_layout.addWidget(self.boton_carpeta_salida)
         self.boton_carpeta_salida.setFixedSize(120, 30)
+
+    def cargar_usuarios(self, lista_usuarios):
+
+        self.tabla_usuarios.setRowCount(len(lista_usuarios))
+        for fila, usuario in enumerate(lista_usuarios):
+            for col, valor in enumerate(usuario):
+                item = QTableWidgetItem(str(valor))
+                self.tabla_usuarios.setItem(fila, col, item)
+
+    def cargar_datos_usuarios(self):
+        try:
+            lista_usuarios = UsuarioService.obtener_usarios()
+
+            if lista_usuarios:
+                self.cargar_usuarios(lista_usuarios)
+            else:
+                print("No se encontraron usuarios para mostrar")
+        except Exception as e:
+            print(f"Error al cargar usuarios: {e}")

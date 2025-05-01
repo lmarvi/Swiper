@@ -3,7 +3,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QPushButton, QSizePolicy
 
 
-class Boton_canal(QPushButton):
+class BotonCanal(QPushButton):
 
     def __init__(self, texto: str, color: str, parent=None):
         super().__init__(texto, parent)
