@@ -41,7 +41,8 @@ class CrearDB:
                         nombre         VARCHAR(50) NOT NULL,
                         contrasena     VARCHAR(50) NOT NULL,
                         rol            CHAR(10)    NOT NULL,
-                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW()
+                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW(),
+                        UNIQUE(nombre)
                     );
                 """)
                 print("Tabla usuarios creada o ya existente")
@@ -53,7 +54,8 @@ class CrearDB:
                         nombre         VARCHAR(25) NOT NULL,
                         canales_entrada INTEGER[]  NOT NULL,
                         canales_salida  INTEGER[]  NOT NULL,
-                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW()
+                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW(),
+                        UNIQUE(nombre)
                     );
                 """)
                 print("Tabla esquemas creada o ya existente")
@@ -63,9 +65,9 @@ class CrearDB:
                     CREATE TABLE IF NOT EXISTS public.centros_productivos (
                         centro_id      BIGSERIAL PRIMARY KEY,
                         nombre         VARCHAR(25) NOT NULL,
-                        ip_servidor    VARCHAR(50) NOT NULL,
                         esquemas_ids   INTEGER[]  NOT NULL,
-                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW()
+                        fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW(),
+                        UNIQUE(nombre)
                     );
                 """)
                 print("Tabla centros_productivos creada o ya existente")
