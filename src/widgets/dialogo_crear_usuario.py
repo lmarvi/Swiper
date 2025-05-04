@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayo
 from src.models.usuario import Usuario
 
 
-class UsuarioDialog(QDialog):
+class NuevoUsuarioDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Nuevo Usuario")

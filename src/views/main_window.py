@@ -45,6 +45,8 @@ class MainWindow(QMainWindow):
         self.ui.boton_eliminar_esquema.clicked.connect(self._controllerMainWindow.eliminar_esquema)
 
         self.ui.boton_anadir_usuario.clicked.connect(self._controllerUsuario.datos_nuevo_usuario)
+        self.ui.boton_editar_usuario.clicked.connect(self._controllerUsuario.datos_usuario_editado)
+        self.ui.boton_eliminar_usuario.clicked.connect(self._controllerUsuario.id_usuario)
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación

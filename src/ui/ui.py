@@ -419,6 +419,7 @@ class SwiperUI(QWidget):
         self.tabla_usuarios.setSelectionBehavior(QTableWidget.SelectRows)
         self.tabla_usuarios.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabla_usuarios.setAlternatingRowColors(True)
+
         segunda_columna_layout.addWidget(self.tabla_usuarios)
         self.cargar_datos_usuarios()
 

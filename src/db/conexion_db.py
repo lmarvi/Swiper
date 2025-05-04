@@ -81,3 +81,6 @@ class ConexionDB:
         if self._conn:
             self._conn.commit()
 
+    def rollback(self):
+        if self._conn:
+            self._conn.rollback()
