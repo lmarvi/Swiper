@@ -2,6 +2,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 
+from src.controllers.centro_productivo_controller import CentroController
 from src.controllers.usuario_controller import UsuarioController
 from src.services.usuario_service import UsuarioService
 from src.ui.ui import SwiperUI
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
         self.ui = None
         self._controllerMainWindow = None
         self._controllerUsuario = None
+        self._controllerCentro = None
 
     def configurar_interfaz(self, esAdmin):
 
@@ -35,6 +37,7 @@ class MainWindow(QMainWindow):
         # Configurar el controlador
         self._controllerMainWindow = MainWindowController(self.ui)
         self._controllerUsuario = UsuarioController(self.ui)
+        self._controllerCentro = CentroController(self.ui)
 
         # Pasar el servicio al controlador
         self._controllerUsuario.UsuarioService = self.usuario_service
@@ -47,6 +50,10 @@ class MainWindow(QMainWindow):
         self.ui.boton_anadir_usuario.clicked.connect(self._controllerUsuario.datos_nuevo_usuario)
         self.ui.boton_editar_usuario.clicked.connect(self._controllerUsuario.datos_usuario_editado)
         self.ui.boton_eliminar_usuario.clicked.connect(self._controllerUsuario.id_usuario)
+
+        self.ui.boton_anadir_centro.clicked.connect(self._controllerCentro.datos_nuevo_centro)
+        self.ui.boton_editar_centro.clicked.connect(self._controllerCentro.datos_centro_editado)
+        self.ui.boton_eliminar_centro.clicked.connect(self._controllerCentro.id_centro)
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación

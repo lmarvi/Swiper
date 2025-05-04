@@ -70,7 +70,7 @@ class UsuarioController:
                     usuarios = self.UsuarioService.obtener_usarios()
                     self.view.cargar_usuarios(usuarios)
                 else:
-                    QMessageBox.warning(self.view, "Error", "No se ha podido editar el usuario")
+                    QMessageBox.warning(self.view, "Error", "No se ha podido eliminar el usuario")
 
         else:
             QMessageBox.warning(self.view,"Error","Selecciona un usuario")

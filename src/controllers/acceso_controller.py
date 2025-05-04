@@ -1,13 +1,7 @@
-"""
 
-class acceso_controller:
 
+class AccesoController:
     def __init__(self):
 
-    def agregarAcceso(self):
-
-    def editarAcceso(self):
-
-    def eliminarAcceso(self):
-
-"""
+    def datos_nuevo_acceso(self):
+        d

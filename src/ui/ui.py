@@ -4,6 +4,8 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel,
     QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget, \
     QTableWidgetItem
 
+from src.services.acceso_service import AccesoService
+from src.services.centro_service import CentroService
 from src.services.usuario_service import UsuarioService
 from src.widgets.boton_canal import BotonCanal
 
@@ -436,23 +438,65 @@ class SwiperUI(QWidget):
         self.boton_editar_usuario.setFixedSize(120, 30)
         self.boton_eliminar_usuario.setFixedSize(120, 30)
 
-        label_usuarios = QLabel("Accesos")
-        label_usuarios.setAlignment(Qt.AlignCenter)
-        label_usuarios.setStyleSheet("font-weight: bold; color: #212121;")
-        segunda_columna_layout.addWidget(label_usuarios)
+        # Layout para centros productivos y accesos:
+
+        layout_centros_accesos = QHBoxLayout()
+        segunda_columna_layout.addLayout(layout_centros_accesos)
+
+        layout_centros = QVBoxLayout()
+        layout_accesos = QVBoxLayout()
+        layout_centros_accesos.addLayout(layout_centros)
+        layout_centros_accesos.addLayout(layout_accesos)
+
+        # Tabla centros
+
+        label_centros = QLabel("Centros")
+        label_centros.setAlignment(Qt.AlignCenter)
+        label_centros.setStyleSheet("font-weight: bold; color: #212121;")
+        layout_centros.addWidget(label_centros)
+
+        self.tabla_centros = QTableWidget()
+        self.tabla_centros.setColumnCount(4)
+        cabecera = ["id", "Nombre Centro Productivo","Esquemas Centro Productivo","Fecha creación centro"]
+        self.tabla_centros.setHorizontalHeaderLabels(cabecera)
+        self.tabla_centros.horizontalHeader().setStretchLastSection(True)
+        self.tabla_centros.setSelectionBehavior(QTableWidget.SelectRows)
+        self.tabla_centros.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.tabla_centros.setAlternatingRowColors(True)
+        layout_centros.addWidget(self.tabla_centros)
+        self.cargar_datos_centros()
+
+        layout_botones_centros = QHBoxLayout()
+        layout_centros.addLayout(layout_botones_centros)
+
+        self.boton_anadir_centro = QPushButton("Añadir centro")
+        self.boton_editar_centro = QPushButton("Editar centro")
+        self.boton_eliminar_centro = QPushButton("Eliminar centro")
+        layout_botones_centros.addWidget(self.boton_anadir_centro)
+        layout_botones_centros.addWidget(self.boton_editar_centro)
+        layout_botones_centros.addWidget(self.boton_eliminar_centro)
+        self.boton_anadir_centro.setFixedSize(120, 30)
+        self.boton_editar_centro.setFixedSize(120, 30)
+        self.boton_eliminar_centro.setFixedSize(120, 30)
+
+        # Tabla accesos
+        label_accesos = QLabel("Accesos")
+        label_accesos.setAlignment(Qt.AlignCenter)
+        label_accesos.setStyleSheet("font-weight: bold; color: #212121;")
+        layout_accesos.addWidget(label_accesos)
 
         self.tabla_accesos = QTableWidget()
-        self.tabla_accesos.setColumnCount(5)
-        cabecera = ["id", "Nombre", "Accesos", "Fecha creación acceso"]
+        self.tabla_accesos.setColumnCount(4)
+        cabecera = ["id", "Nombre Usuario", "Acceso", "Fecha creación acceso"]
         self.tabla_accesos.setHorizontalHeaderLabels(cabecera)
         self.tabla_accesos.horizontalHeader().setStretchLastSection(True)
         self.tabla_accesos.setSelectionBehavior(QTableWidget.SelectRows)
         self.tabla_accesos.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabla_accesos.setAlternatingRowColors(True)
-        segunda_columna_layout.addWidget(self.tabla_accesos)
+        layout_accesos.addWidget(self.tabla_accesos)
 
         layout_botones_accesos = QHBoxLayout()
-        segunda_columna_layout.addLayout(layout_botones_accesos)
+        layout_accesos.addLayout(layout_botones_accesos)
 
         self.boton_anadir_acceso = QPushButton("Añadir acceso")
         self.boton_editar_acceso = QPushButton("Editar acceso")
@@ -510,3 +554,42 @@ class SwiperUI(QWidget):
                 print("No se encontraron usuarios para mostrar")
         except Exception as e:
             print(f"Error al cargar usuarios: {e}")
+
+    def cargar_accesos(self, lista_accesos):
+        self.tabla_accesos.setRowCount(len(lista_accesos))
+        for fila, usuario in enumerate(lista_accesos):
+            for col, valor in enumerate(usuario):
+                item = QTableWidgetItem(str(valor))
+                self.tabla_accesos.setItem(fila,col,item)
+
+    def cargar_datos_accesos(self):
+        try:
+            acceso_service = AccesoService(self)
+            lista_accesos = acceso_service.obtener_accesos()
+
+            if lista_accesos:
+                self.cargar_accesos(lista_accesos)
+            else:
+                print("No se encontraron accesos para mostrar")
+        except Exception as e:
+            print(f"Error al cargar accesos: {e}")
+
+    def cargar_centros(self, lista_centros):
+        self.tabla_centros.setRowCount(len(lista_centros))
+        for fila, centro in enumerate(lista_centros):
+            for col, valor in enumerate(centro):
+                item = QTableWidgetItem(str(valor))
+                self.tabla_centros.setItem(fila, col, item)
+
+    def cargar_datos_centros(self):
+        try:
+            centro_service = CentroService(self)
+            lista_centros = centro_service.obtener_centros()
+
+            if lista_centros:
+                self.cargar_centros(lista_centros)
+            else:
+                print("No se encontraron centros productivos para mostrar")
+        except Exception as e:
+            print(f"Error al cargar centros: {e}")
+
