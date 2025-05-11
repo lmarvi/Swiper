@@ -63,6 +63,7 @@ class MainWindow(QMainWindow):
         self.ui.boton_editar_acceso.clicked.connect(self._controllerAcceso.datos_acceso_editado)
         self.ui.boton_eliminar_acceso.clicked.connect(self._controllerAcceso.id_acceso)
 
+        self.ui.boton_editar_esquema.toggled.connect(self._controllerMainWindow.editar_esquema)
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación

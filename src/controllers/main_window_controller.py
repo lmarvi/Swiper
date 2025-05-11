@@ -18,25 +18,23 @@ class MainWindowController:
             return
 
         btn = BotonCanal(texto.strip(), "#D9D9D9", parent=self.view)
+        btn.dobleClicSignal.connect(self.esquema_doble_clic)
         self.view.layout_esquemas_draganddrop.addWidget(btn)
         self.view.grupo_canales.addButton(btn)
 
     def editar_esquema(self):
-        btn = self.view.grupo_canales.checkedButton()
-        if btn is None:
+        esquema_seleccionado = self.view.grupo_canales.checkedButton()
+        if esquema_seleccionado is None:
+            self.view.boton_editar_esquema.setChecked(False)
+            QMessageBox.warning(self.view,"Error","Selecciona un esquema para editar los colores")
             return
+        editar_activado = self.view.boton_editar_esquema.isChecked()
+        habilitar_botones = esquema_seleccionado and editar_activado
 
+        # Habilito el estado de los botones para poder configurar el esquema
+        self.view.boton_anadir_entrada.setEnabled(habilitar_botones)
+        self.view.boton_quitar_entrada.setEnabled(habilitar_botones)
 
-        nuevo_texto, ok = QInputDialog.getText(
-            self.view,
-            "Editar esquema",
-            "Nuevo nombre del esquema:",
-            text=btn.text()
-        )
-        if not ok or not nuevo_texto.strip():
-            return
-
-        btn.setText(nuevo_texto.strip())
 
     def eliminar_esquema(self):
         btn = self.view.grupo_canales.checkedButton()
@@ -64,6 +62,24 @@ class MainWindowController:
         colores_combo.addItems(["Amarillo","Azul","Beige","Cian","Naranja","Marron","Rosa","Turquesa","Verde"])
         window = QDialog(colores_combo)
         window.show()
+
+    def esquema_doble_clic(self, boton):
+        # Método para modificar el nombre de un esquema al hacer doble clic en él
+        if not self.view.boton_editar_esquema.isChecked():
+            return  # No hacer nada si el botón editar no está activado
+
+        # Selecciona automáticamente el botón al hacer doble clic
+        boton.setChecked(True)
+
+        # Mostrar el diálogo de edición
+        nuevo_texto, ok = QInputDialog.getText(
+            self.view,
+            "Editar esquema",
+            "Nuevo nombre del esquema:",
+            text=boton.text()
+        )
+        if ok and nuevo_texto.strip():
+            boton.setText(nuevo_texto.strip())
 
 
 

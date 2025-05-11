@@ -1,9 +1,10 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QPushButton, QSizePolicy
 
 
 class BotonCanal(QPushButton):
+    dobleClicSignal = Signal(QPushButton)
 
     def __init__(self, texto: str, color: str, parent=None):
         super().__init__(texto, parent)
@@ -16,7 +17,7 @@ class BotonCanal(QPushButton):
         # Configuración de tamaño y cursor
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setMinimumHeight(30)
-        self.setMinimumWidth(150)
+        self.setMinimumWidth(200)
         self.setCursor(Qt.PointingHandCursor)
         self.setCheckable(True)
 
@@ -47,3 +48,8 @@ class BotonCanal(QPushButton):
 
     def _on_toggled(self, checked: bool):
         self.setStyleSheet(self._selected if checked else self._unselected)
+
+    def mouseDoubleClickEvent(self, event):
+        # Emitimos la señal de doble clic
+        self.dobleClicSignal.emit(self)
+        super().mouseDoubleClickEvent(event)

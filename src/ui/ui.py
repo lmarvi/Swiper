@@ -160,6 +160,7 @@ class SwiperUI(QWidget):
         self.boton_editar_esquema = QPushButton("Editar esquema")
         layout_interno_botones.addWidget(self.boton_editar_esquema, alignment=Qt.AlignCenter)
         self.boton_editar_esquema.setFixedSize(120, 30)
+        self.boton_editar_esquema.setCheckable(True)
 
         self.boton_eliminar_esquema = QPushButton("Eliminar esquema")
         layout_interno_botones.addWidget(self.boton_eliminar_esquema, alignment=Qt.AlignCenter)
@@ -296,6 +297,8 @@ class SwiperUI(QWidget):
         self.boton_quitar_entrada = QPushButton("Quitar")
         self.boton_anadir_entrada.setFixedSize(120, 30)
         self.boton_quitar_entrada.setFixedSize(120, 30)
+        self.boton_anadir_entrada.setEnabled(False)
+        self.boton_quitar_entrada.setEnabled(False)
         botones_entrada_h = QHBoxLayout()
         botones_entrada_h.setContentsMargins(0, 0, 0, 0)
         botones_entrada_h.setSpacing(10)
@@ -345,6 +348,8 @@ class SwiperUI(QWidget):
         self.boton_quitar_proc = QPushButton("Quitar")
         self.boton_procesar.setFixedSize(120, 30)
         self.boton_quitar_proc.setFixedSize(120, 30)
+        self.boton_procesar.setEnabled(False)
+        self.boton_quitar_proc.setEnabled(False)
         botones_entrada_h2 = QHBoxLayout()
         botones_entrada_h2.setContentsMargins(0, 0, 0, 0)
         botones_entrada_h2.setSpacing(10)
@@ -361,6 +366,7 @@ class SwiperUI(QWidget):
         canales = []
         for texto, color in canales:
             btn = BotonCanal(texto, color)
+            btn.dobleClicSignal.connect(self._controller.esquema_doble_clic)
             self.grupo_canales.addButton(btn)
             self.layout_canales.addWidget(btn)
 
@@ -373,6 +379,7 @@ class SwiperUI(QWidget):
         else:
             self.frame_configuracion.hide()
             self.frame_canales.show()
+
 
     def _frame_config_admin(self):
 
