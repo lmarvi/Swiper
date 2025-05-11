@@ -18,8 +18,26 @@ class CentroService:
                     (nuevo_centro.nombre_centro, [])
                 )
                 nuevo_id = cursor.fetchone()[0]
+
+                cursor.execute(
+                    "SELECT usuario_id FROM usuarios WHERE nombre = 'admin'"
+                )
+                admin_id = cursor.fetchone()
+                if admin_id:
+                    admin_id = admin_id[0]
+                    # Creo automáticamente el acceso al centro para el admin
+                    cursor.execute(
+                        """INSERT INTO accesos (usuario_id, centro_id) 
+                        VALUES (%s, %s)""",
+                        (admin_id, nuevo_id)
+                    )
+                    print(f"Acceso al centro {nuevo_centro.nombre_centro} creado automáticamente para admin")
+                else:
+                    print("Advertencia: No se encontró el usuario admin")
+
                 self._conn.commit()
                 return nuevo_id
+
         except Exception as e:
             print(f"Error en la inserción del centro: {e}")
             self._conn.rollback()
@@ -109,6 +127,53 @@ class CentroService:
                     return None
         except Exception as e:
             print(f"Error en la consulta de la lista de centros: {e}")
+            return None
+
+    def obtener_nombres_centros_productivos(self):
+        print("obteniendo lista de nombres de centros")
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT nombre FROM centros_productivos"
+                )
+                tupla_nombres_centros = cursor.fetchall()
+                # Convierto la tupla en lista para que se pueda utilizar en el ComboBox
+                if tupla_nombres_centros:
+                    lista_nombres_centros = [nombre[0] for nombre in tupla_nombres_centros]
+                    return lista_nombres_centros
+                else:
+                    return None
+        except Exception as e:
+            print(f"Error en la consulta de la lista de nombres de centros: {e}")
+            return None
+
+    def obtener_id_centro_por_nombre(self, nombre):
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT centro_id FROM centros_productivos WHERE nombre = %s",
+                    (nombre,)
+                )
+                resultado = cursor.fetchone()
+                return resultado[0] if resultado else None
+        except Exception as e:
+            print(f"Error obteniendo ID del centro: {e}")
+            return None
+
+    def obtener_nombre_centro_por_id(self, centro_id):
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT nombre FROM centros_productivos WHERE centro_id = %s",
+                    (centro_id,)
+                )
+                resultado = cursor.fetchone()
+                return resultado[0] if resultado else None
+        except Exception as e:
+            print(f"Error obteniendo nombre del centro: {e}")
             return None
 
     def cerrar_conexion(self):

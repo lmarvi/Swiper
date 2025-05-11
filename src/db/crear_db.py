@@ -102,5 +102,26 @@ class CrearDB:
                 else:
                     print("Usuario admin ya existe")
 
+                cursor.execute("""
+                    DO $$ 
+                    BEGIN
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.views 
+                            WHERE table_schema = 'public' 
+                            AND table_name = 'vista_accesos'
+                        ) THEN
+                            CREATE VIEW public.vista_accesos AS 
+                            SELECT 
+                                a.acceso_id,
+                                u.nombre AS nombre_usuario, 
+                                cp.nombre AS centro_productivo,
+                                a.fecha_creacion
+                            FROM usuarios u 
+                            INNER JOIN accesos a ON u.usuario_id = a.usuario_id
+                            INNER JOIN centros_productivos cp ON a.centro_id = cp.centro_id;
+                        END IF;
+                    END $$;
+                    """)
+                print("Vista usuario-accesos creada o ya existente")
         finally:
             conn.desconectar()

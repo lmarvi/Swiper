@@ -450,7 +450,7 @@ class SwiperUI(QWidget):
 
         # Tabla centros
 
-        label_centros = QLabel("Centros")
+        label_centros = QLabel("Centros Productivos")
         label_centros.setAlignment(Qt.AlignCenter)
         label_centros.setStyleSheet("font-weight: bold; color: #212121;")
         layout_centros.addWidget(label_centros)
@@ -479,8 +479,9 @@ class SwiperUI(QWidget):
         self.boton_editar_centro.setFixedSize(120, 30)
         self.boton_eliminar_centro.setFixedSize(120, 30)
 
+
         # Tabla accesos
-        label_accesos = QLabel("Accesos")
+        label_accesos = QLabel("Accesos a Centros Productivos")
         label_accesos.setAlignment(Qt.AlignCenter)
         label_accesos.setStyleSheet("font-weight: bold; color: #212121;")
         layout_accesos.addWidget(label_accesos)
@@ -494,6 +495,7 @@ class SwiperUI(QWidget):
         self.tabla_accesos.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabla_accesos.setAlternatingRowColors(True)
         layout_accesos.addWidget(self.tabla_accesos)
+        self.cargar_datos_accesos()
 
         layout_botones_accesos = QHBoxLayout()
         layout_accesos.addLayout(layout_botones_accesos)
@@ -546,7 +548,7 @@ class SwiperUI(QWidget):
     def cargar_datos_usuarios(self):
         try:
             usuario_service = UsuarioService(self)
-            lista_usuarios = usuario_service.obtener_usarios()
+            lista_usuarios = usuario_service.obtener_usuarios()
 
             if lista_usuarios:
                 self.cargar_usuarios(lista_usuarios)

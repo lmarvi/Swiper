@@ -71,3 +71,4 @@ class CentroController:
 
         else:
             QMessageBox.warning(self.view,"Error","Selecciona un centro productivo")
+

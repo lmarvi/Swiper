@@ -112,7 +112,7 @@ class UsuarioService:
 
             return False
 
-    def obtener_usarios(self):
+    def obtener_usuarios(self):
         print("obteniendo lista usuarios")
 
         try:
@@ -128,6 +128,54 @@ class UsuarioService:
                     return None
         except Exception as e:
             print(f"Error en la consulta de la lista de usuarios: {e}")
+            return None
+
+    def obtener_nombres_usuarios(self):
+        print("obteniendo lista de nombres de usuarios")
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT nombre FROM usuarios"
+                )
+                tupla_nombres_usuarios = cursor.fetchall()
+                #Convierto la tupla en lista para que se pueda utilizar en el ComboBox
+                if tupla_nombres_usuarios:
+                    lista_nombres_usuarios = [nombre[0] for nombre in tupla_nombres_usuarios]
+                    print(lista_nombres_usuarios)
+                    return lista_nombres_usuarios
+                else:
+                    return None
+        except Exception as e:
+            print(f"Error en la consulta de la lista de usuarios: {e}")
+            return None
+
+    def obtener_id_por_nombre(self, nombre):
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT usuario_id FROM usuarios WHERE nombre = %s",
+                    (nombre,)
+                )
+                resultado = cursor.fetchone()
+                return resultado[0] if resultado else None
+        except Exception as e:
+            print(f"Error obteniendo ID del usuario: {e}")
+            return None
+
+    def obtener_nombre_por_id(self, usuario_id):
+
+        try:
+            with self._conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT nombre FROM usuarios WHERE usuario_id = %s",
+                    (usuario_id,)
+                )
+                resultado = cursor.fetchone()
+                return resultado[0] if resultado else None
+        except Exception as e:
+            print(f"Error obteniendo nombre del usuario: {e}")
             return None
 
     def cerrar_conexion(self):

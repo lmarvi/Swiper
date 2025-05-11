@@ -2,9 +2,11 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 
+from src.controllers.acceso_controller import AccesoController
 from src.controllers.centro_productivo_controller import CentroController
 from src.controllers.usuario_controller import UsuarioController
 from src.services.usuario_service import UsuarioService
+from src.services.acceso_service import AccesoService
 from src.ui.ui import SwiperUI
 from src.controllers.main_window_controller import MainWindowController
 
@@ -28,6 +30,7 @@ class MainWindow(QMainWindow):
         self._controllerMainWindow = None
         self._controllerUsuario = None
         self._controllerCentro = None
+        self._controllerAcceso = None
 
     def configurar_interfaz(self, esAdmin):
 
@@ -38,6 +41,7 @@ class MainWindow(QMainWindow):
         self._controllerMainWindow = MainWindowController(self.ui)
         self._controllerUsuario = UsuarioController(self.ui)
         self._controllerCentro = CentroController(self.ui)
+        self._controllerAcceso = AccesoController(self.ui)
 
         # Pasar el servicio al controlador
         self._controllerUsuario.UsuarioService = self.usuario_service
@@ -54,6 +58,11 @@ class MainWindow(QMainWindow):
         self.ui.boton_anadir_centro.clicked.connect(self._controllerCentro.datos_nuevo_centro)
         self.ui.boton_editar_centro.clicked.connect(self._controllerCentro.datos_centro_editado)
         self.ui.boton_eliminar_centro.clicked.connect(self._controllerCentro.id_centro)
+
+        self.ui.boton_anadir_acceso.clicked.connect(self._controllerAcceso.datos_nuevo_acceso)
+        self.ui.boton_editar_acceso.clicked.connect(self._controllerAcceso.datos_acceso_editado)
+        self.ui.boton_eliminar_acceso.clicked.connect(self._controllerAcceso.id_acceso)
+
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación
