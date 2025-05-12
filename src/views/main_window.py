@@ -65,6 +65,9 @@ class MainWindow(QMainWindow):
 
         self.ui.boton_editar_esquema.toggled.connect(self._controllerMainWindow.editar_esquema)
 
+        self.ui.boton_anadir_entrada.clicked.connect(self._controllerMainWindow.anadir_entrada)
+        self.ui.boton_quitar_entrada.clicked.connect(self._controllerMainWindow.quitar_entrada)
+
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación
         if hasattr(self, 'usuario_service'):

@@ -282,7 +282,7 @@ class SwiperUI(QWidget):
         layout_layouts_entrada.addWidget(label_entrada)
         label_entrada.setAlignment(Qt.AlignCenter)
         label_entrada.setStyleSheet("color: #828282;")
-        layout_entrada_draganddrop = QVBoxLayout()
+        self.layout_entrada_draganddrop = QVBoxLayout()
         frame_entrada_contenedor = QFrame()
         frame_entrada_contenedor.setFixedSize(300, 450)
         frame_entrada_contenedor.setStyleSheet("""
@@ -291,7 +291,7 @@ class SwiperUI(QWidget):
                                     border: 2px solid #ebebeb;
                                     border-radius: 24px;
                                 }""")
-        frame_entrada_contenedor.setLayout(layout_entrada_draganddrop)
+        frame_entrada_contenedor.setLayout(self.layout_entrada_draganddrop)
         layout_layouts_entrada.addWidget(frame_entrada_contenedor)
         self.boton_anadir_entrada = QPushButton("Añadir")
         self.boton_quitar_entrada = QPushButton("Quitar")
@@ -305,15 +305,14 @@ class SwiperUI(QWidget):
         botones_entrada_h.addWidget(self.boton_anadir_entrada)
         botones_entrada_h.addWidget(self.boton_quitar_entrada)
         layout_layouts_entrada.addLayout(botones_entrada_h)
-        # self.boton_anadir.clicked.connect(self.guardar_color)
-        # self.boton_quitar.clicked.connect(self.quitar_color)
+
 
         ###### COLUMNA SALIDA ######
         label_salida = QLabel("Salida")
         layout_layouts_salida.addWidget(label_salida)
         label_salida.setAlignment(Qt.AlignCenter)
         label_salida.setStyleSheet("color: #828282;")
-        layout_salida_draganddrop = QVBoxLayout()
+        self.layout_salida_draganddrop = QVBoxLayout()
         frame_salida_contenedor = QFrame()
         frame_salida_contenedor.setFixedSize(300, 450)
         frame_salida_contenedor.setStyleSheet("""
@@ -322,7 +321,7 @@ class SwiperUI(QWidget):
                                     border: 2px solid #ebebeb;
                                     border-radius: 24px;
                                 }""")
-        frame_salida_contenedor.setLayout(layout_salida_draganddrop)
+        frame_salida_contenedor.setLayout(self.layout_salida_draganddrop)
         layout_layouts_salida.addWidget(frame_salida_contenedor)
         layout_layouts_salida.addItem(
             QSpacerItem(0, 30, QSizePolicy.Minimum, QSizePolicy.Fixed)
