@@ -14,8 +14,8 @@ from src.controllers.main_window_controller import MainWindowController
 class MainWindow(QMainWindow):
 
     def __init__(self):
-
         super().__init__()
+
         self.usuario_service = UsuarioService(self)
         self.setWindowTitle("Swiper")
         self.setGeometry(200, 200, 1500, 850)
@@ -67,6 +67,13 @@ class MainWindow(QMainWindow):
 
         self.ui.boton_anadir_entrada.clicked.connect(self._controllerMainWindow.anadir_entrada)
         self.ui.boton_quitar_entrada.clicked.connect(self._controllerMainWindow.quitar_entrada)
+        self.ui.boton_subir_entrada.clicked.connect(self._controllerMainWindow.subir_entrada)
+        self.ui.boton_bajar_entrada.clicked.connect(self._controllerMainWindow.bajar_entrada)
+        self.ui.boton_subir_salida.clicked.connect(self._controllerMainWindow.subir_salida)
+        self.ui.boton_bajar_salida.clicked.connect(self._controllerMainWindow.bajar_salida)
+        self.ui.grupo_entrada.buttonClicked.connect(self._controllerMainWindow.habilitar_botones_entrada_mover)
+        self.ui.grupo_salida.buttonClicked.connect(self._controllerMainWindow.habilitar_botones_salida_mover)
+        self.ui.grupo_canales.buttonClicked.connect(self._controllerMainWindow.habilitar_boton_guardar)
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación

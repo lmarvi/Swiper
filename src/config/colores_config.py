@@ -1,14 +1,14 @@
 COLORES_CONFIG = {
-    "Amarillo": "#ffff00",
-    "Azul": "#0000ff",
-    "Beige": "#fcc051",
-    "Cian": "#00e5ff",
-    "Naranja": "#ff8c00",
-    "Negro": "#000000",
-    "Marron": "#8a370e",
-    "Rosa": "#ff69a7",
-    "Turquesa": "#02e8dd",
-    "Verde": "#04bd48",
+    "Amarillo": "#ffff99",
+    "Azul": "#b3d9ff",
+    "Beige": "#feeab4",
+    "Cian": "#99f5ff",
+    "Naranja": "#ffd199",
+    "Negro": "#cccccc",
+    "Marron": "#f6bea2",
+    "Rosa": "#ffcce0",
+    "Turquesa": "#9afee3",
+    "Verde": "#b0e8bf",
 
 
 }

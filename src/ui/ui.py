@@ -16,7 +16,10 @@ class SwiperUI(QWidget):
         super().__init__()
         self.grupo_canales = QButtonGroup(self)  # Definir aquí para que sea accesible en toda la clase
         self.grupo_canales.setExclusive(True)
-
+        self.grupo_entrada = QButtonGroup(self)
+        self.grupo_entrada.setExclusive(True)
+        self.grupo_salida = QButtonGroup(self)
+        self.grupo_salida.setExclusive(True)
         self.build_ui(esAdmin)
 
     def build_ui(self,esAdmin):
@@ -272,7 +275,8 @@ class SwiperUI(QWidget):
         frame_esquemas_contenedor.setLayout(self.layout_esquemas_draganddrop)
         layout_layouts_esquemas.addWidget(frame_esquemas_contenedor)
 
-        self.boton_guardar = QPushButton("Guardar")
+        self.boton_guardar = QPushButton("Guardar Esquema")
+        self.boton_guardar.setEnabled(False)
         layout_layouts_esquemas.addWidget(self.boton_guardar, alignment=Qt.AlignCenter)
         self.boton_guardar.setFixedSize(120, 30)
         # boton_guardar.clicked.connect(guardar)
@@ -283,6 +287,9 @@ class SwiperUI(QWidget):
         label_entrada.setAlignment(Qt.AlignCenter)
         label_entrada.setStyleSheet("color: #828282;")
         self.layout_entrada_draganddrop = QVBoxLayout()
+        self.layout_entrada_draganddrop.setContentsMargins(5, 5, 5, 5)
+        self.layout_entrada_draganddrop.setSpacing(5)
+        self.layout_entrada_draganddrop.setAlignment(Qt.AlignTop)
         frame_entrada_contenedor = QFrame()
         frame_entrada_contenedor.setFixedSize(300, 450)
         frame_entrada_contenedor.setStyleSheet("""
@@ -295,15 +302,23 @@ class SwiperUI(QWidget):
         layout_layouts_entrada.addWidget(frame_entrada_contenedor)
         self.boton_anadir_entrada = QPushButton("Añadir")
         self.boton_quitar_entrada = QPushButton("Quitar")
-        self.boton_anadir_entrada.setFixedSize(120, 30)
-        self.boton_quitar_entrada.setFixedSize(120, 30)
+        self.boton_subir_entrada = QPushButton("Subir")
+        self.boton_bajar_entrada = QPushButton("Bajar")
+        self.boton_anadir_entrada.setFixedSize(60, 30)
+        self.boton_quitar_entrada.setFixedSize(60, 30)
+        self.boton_subir_entrada.setFixedSize(60, 30)
+        self.boton_bajar_entrada.setFixedSize(60, 30)
         self.boton_anadir_entrada.setEnabled(False)
         self.boton_quitar_entrada.setEnabled(False)
+        self.boton_subir_entrada.setEnabled(False)
+        self.boton_bajar_entrada.setEnabled(False)
         botones_entrada_h = QHBoxLayout()
         botones_entrada_h.setContentsMargins(0, 0, 0, 0)
         botones_entrada_h.setSpacing(10)
         botones_entrada_h.addWidget(self.boton_anadir_entrada)
         botones_entrada_h.addWidget(self.boton_quitar_entrada)
+        botones_entrada_h.addWidget(self.boton_subir_entrada)
+        botones_entrada_h.addWidget(self.boton_bajar_entrada)
         layout_layouts_entrada.addLayout(botones_entrada_h)
 
 
@@ -313,6 +328,9 @@ class SwiperUI(QWidget):
         label_salida.setAlignment(Qt.AlignCenter)
         label_salida.setStyleSheet("color: #828282;")
         self.layout_salida_draganddrop = QVBoxLayout()
+        self.layout_salida_draganddrop.setContentsMargins(5, 5, 5, 5)
+        self.layout_salida_draganddrop.setSpacing(5)
+        self.layout_salida_draganddrop.setAlignment(Qt.AlignTop)
         frame_salida_contenedor = QFrame()
         frame_salida_contenedor.setFixedSize(300, 450)
         frame_salida_contenedor.setStyleSheet("""
@@ -323,9 +341,19 @@ class SwiperUI(QWidget):
                                 }""")
         frame_salida_contenedor.setLayout(self.layout_salida_draganddrop)
         layout_layouts_salida.addWidget(frame_salida_contenedor)
-        layout_layouts_salida.addItem(
-            QSpacerItem(0, 30, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        )
+        self.boton_subir_salida = QPushButton("Subir")
+        self.boton_bajar_salida = QPushButton("Bajar")
+        self.boton_subir_salida.setFixedSize(120, 30)
+        self.boton_bajar_salida.setFixedSize(120, 30)
+        self.boton_subir_salida.setEnabled(False)
+        self.boton_bajar_salida.setEnabled(False)
+        botones_salida_h = QHBoxLayout()
+        botones_salida_h.setContentsMargins(0, 0, 0, 0)
+        botones_salida_h.setSpacing(10)
+        botones_salida_h.addWidget(self.boton_subir_salida)
+        botones_salida_h.addWidget(self.boton_bajar_salida)
+        layout_layouts_salida.addLayout(botones_salida_h)
+
 
         ###### COLUMNA PROCESADO ######
         label_procesado = QLabel("Procesado")
