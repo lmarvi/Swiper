@@ -52,8 +52,8 @@ class CrearDB:
                     CREATE TABLE IF NOT EXISTS public.esquemas (
                         esquema_id     BIGSERIAL PRIMARY KEY,
                         nombre         VARCHAR(25) NOT NULL,
-                        canales_entrada INTEGER[]  NOT NULL,
-                        canales_salida  INTEGER[]  NOT NULL,
+                        canales_entrada TEXT[]  NOT NULL,
+                        canales_salida  TEXT[]  NOT NULL,
                         fecha_creacion TIMESTAMP   NOT NULL DEFAULT NOW(),
                         UNIQUE(nombre)
                     );

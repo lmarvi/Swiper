@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QMessageBox
-
 from src.db.conexion_db import ConexionDB
 
 

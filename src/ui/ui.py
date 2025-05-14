@@ -571,6 +571,7 @@ class SwiperUI(QWidget):
         config_layout.addWidget(self.boton_carpeta_salida)
         self.boton_carpeta_salida.setFixedSize(120, 30)
 
+
     def cargar_usuarios(self, lista_usuarios):
 
         self.tabla_usuarios.setRowCount(len(lista_usuarios))

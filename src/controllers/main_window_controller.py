@@ -2,6 +2,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QInputDialog, QMessageBox, QComboBox, QDialog, QSizePolicy
 
 from src.config.colores_config import COLORES_CONFIG
+from src.controllers.esquema_controller import EsquemaController
+from src.services.esquema_service import EsquemaService
 from src.widgets.boton_canal import BotonCanal
 from src.widgets.dialogo_nuevo_color import NuevoColorDialog
 
@@ -9,7 +11,7 @@ from src.widgets.dialogo_nuevo_color import NuevoColorDialog
 class MainWindowController:
     def __init__(self,view):
         self.view = view
-
+        self.EsquemaService = EsquemaService(view)
 
     def anadir_esquema(self):
 
@@ -67,6 +69,16 @@ class MainWindowController:
         if hay_seleccion:
             # Solo habilitar si hay algo seleccionado
             self.view.boton_guardar.setEnabled(hay_seleccion)
+
+    def datos_nuevo_esquema(self):
+        datos_esquema = EsquemaController(self.view)
+        nuevo_esquema = datos_esquema.get_nuevo_esquema(self)
+        if nuevo_esquema:
+            pasar_datos = self.EsquemaService.guardar_esquema(nuevo_esquema)
+            if pasar_datos:
+                QMessageBox.information(self.view, "Información", "Esquema guardado con éxito")
+            else:
+                QMessageBox.warning(self.view, "Error", "No se ha podido guardar el esquema")
 
     def anadir_entrada(self):
 
@@ -247,6 +259,22 @@ class MainWindowController:
             if isinstance(widget, BotonCanal):
                 botones.append(widget)
         return botones
+
+    def obtener_nombre_orden_botones_entrada(self):
+        nombre_colores = []
+        layout = self.view.layout_entrada_draganddrop
+        for i in range(layout.count()):
+            nombre = layout.itemAt(i).widget().text()
+            nombre_colores.append(nombre)
+        return nombre_colores
+
+    def obtener_nombre_orden_botones_salida(self):
+        nombre_colores = []
+        layout = self.view.layout_salida_draganddrop
+        for i in range(layout.count()):
+            nombre = layout.itemAt(i).widget().text()
+            nombre_colores.append(nombre)
+        return nombre_colores
 
     def esquema_doble_clic(self, boton):
         # Método para modificar el nombre de un esquema al hacer doble clic en él

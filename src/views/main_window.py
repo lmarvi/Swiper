@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         self.ui.boton_eliminar_acceso.clicked.connect(self._controllerAcceso.id_acceso)
 
         self.ui.boton_editar_esquema.toggled.connect(self._controllerMainWindow.editar_esquema)
-
+        self.ui.boton_guardar.clicked.connect(self._controllerMainWindow.datos_nuevo_esquema)
         self.ui.boton_anadir_entrada.clicked.connect(self._controllerMainWindow.anadir_entrada)
         self.ui.boton_quitar_entrada.clicked.connect(self._controllerMainWindow.quitar_entrada)
         self.ui.boton_subir_entrada.clicked.connect(self._controllerMainWindow.subir_entrada)

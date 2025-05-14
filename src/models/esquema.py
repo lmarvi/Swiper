@@ -1,7 +1,7 @@
 import datetime
 from typing import List
 
-"""
+
 class Esquema:
     def __init__(
         self,
@@ -17,4 +17,3 @@ class Esquema:
         self.canales_entrada = canales_entrada
         self.canales_salida = canales_salida
 
-"""

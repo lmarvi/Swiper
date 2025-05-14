@@ -20,8 +20,6 @@ class UsuarioController:
                 pasar_datos = self.UsuarioService.crear_usuario(nuevo_usuario)
                 if pasar_datos:
                     QMessageBox.information(self.view,"Información","Usuario creado con éxito")
-                    usuarios = self.UsuarioService.obtener_usarios()
-                    self.view.cargar_usuarios(usuarios)
                 else:
                     QMessageBox.warning(self.view,"Error","No se ha podido crear el usuario")
 
