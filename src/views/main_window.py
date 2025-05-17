@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from src.controllers.acceso_controller import AccesoController
 from src.controllers.centro_productivo_controller import CentroController
+from src.controllers.esquema_controller import EsquemaController
 from src.controllers.usuario_controller import UsuarioController
 from src.services.usuario_service import UsuarioService
 from src.services.acceso_service import AccesoService
@@ -31,6 +32,7 @@ class MainWindow(QMainWindow):
         self._controllerUsuario = None
         self._controllerCentro = None
         self._controllerAcceso = None
+        self._controllerEsquema = None
 
     def configurar_interfaz(self, esAdmin):
 
@@ -42,6 +44,7 @@ class MainWindow(QMainWindow):
         self._controllerUsuario = UsuarioController(self.ui)
         self._controllerCentro = CentroController(self.ui)
         self._controllerAcceso = AccesoController(self.ui)
+        self._controllerEsquema = EsquemaController(self.ui)
 
         # Pasar el servicio al controlador
         self._controllerUsuario.UsuarioService = self.usuario_service
@@ -74,6 +77,9 @@ class MainWindow(QMainWindow):
         self.ui.grupo_entrada.buttonClicked.connect(self._controllerMainWindow.habilitar_botones_entrada_mover)
         self.ui.grupo_salida.buttonClicked.connect(self._controllerMainWindow.habilitar_botones_salida_mover)
         self.ui.grupo_canales.buttonClicked.connect(self._controllerMainWindow.habilitar_boton_guardar)
+
+        # Inicializar la aplicación cargando datos
+        self._controllerMainWindow.inicializar_aplicacion()
 
     def cerrar_conexion(self, conn):
         # Cierra recursos antes de cerrar la aplicación
