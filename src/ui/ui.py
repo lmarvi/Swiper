@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
     QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget, \
-    QTableWidgetItem
+    QTableWidgetItem, QListWidget
 
 from src.services.acceso_service import AccesoService
 from src.services.centro_service import CentroService
@@ -14,8 +14,8 @@ class SwiperUI(QWidget):
 
     def __init__(self,esAdmin):
         super().__init__()
-        self.grupo_canales = QButtonGroup(self)  # Definir aquí para que sea accesible en toda la clase
-        self.grupo_canales.setExclusive(True)
+        self.grupo_esquemas = QButtonGroup(self)  # Definir aquí para que sea accesible en toda la clase
+        self.grupo_esquemas.setExclusive(True)
         self.grupo_entrada = QButtonGroup(self)
         self.grupo_entrada.setExclusive(True)
         self.grupo_salida = QButtonGroup(self)
@@ -57,8 +57,8 @@ class SwiperUI(QWidget):
         main.addWidget(main_widget)
 
         self.frame_configuracion = self._crear_frame_config(esAdmin)
-        self.frame_canales = self._crear_frame_canales()
-        main.addWidget(self.frame_canales)
+        self.frame_principal = self._crear_frame_principal()
+        main.addWidget(self.frame_principal)
         main.addWidget(self.frame_configuracion)
         self.frame_configuracion.hide()
 
@@ -202,7 +202,7 @@ class SwiperUI(QWidget):
 
         return frame_blanco_configuracion
 
-    def _crear_frame_canales(self):
+    def _crear_frame_principal(self):
         main_layout_canales = QVBoxLayout()
         main_layout_canales.setContentsMargins(0, 0, 0, 30)
         main_layout_canales.setSpacing(0)
@@ -218,13 +218,15 @@ class SwiperUI(QWidget):
         frame_blanco_canales.setGraphicsEffect(self.shadow_canales)
 
         layout_general_canales = QHBoxLayout(frame_blanco_canales)
+        layout_general_canales.setSpacing(20)
+        layout_general_canales.setContentsMargins(20,10,20,10)
         main_layout_canales.addLayout(layout_general_canales)
         frame_blanco_canales.setLayout(layout_general_canales)
         self.main_layout.addWidget(frame_blanco_canales)
 
         ##### Esquemas #####
         layout_contenedor_esquemas = QHBoxLayout()
-        layout_contenedor_esquemas.setSpacing(30)
+        layout_contenedor_esquemas.setSpacing(0)
         layout_general_canales.addLayout(layout_contenedor_esquemas)
         layout_contenedor_entrada = QVBoxLayout()
         layout_contenedor_entrada.setSpacing(30)
@@ -263,6 +265,8 @@ class SwiperUI(QWidget):
         label_esquemas.setAlignment(Qt.AlignCenter)
         label_esquemas.setStyleSheet("color: #828282;")
         self.layout_esquemas_draganddrop = QVBoxLayout()
+        self.layout_esquemas_draganddrop.setContentsMargins(10, 25, 10, 10)
+        self.layout_esquemas_draganddrop.setSpacing(5)
         self.layout_esquemas_draganddrop.setAlignment(Qt.AlignCenter)
         frame_esquemas_contenedor = QFrame()
         frame_esquemas_contenedor.setFixedSize(300, 450)
@@ -279,7 +283,7 @@ class SwiperUI(QWidget):
         self.boton_guardar.setEnabled(False)
         layout_layouts_esquemas.addWidget(self.boton_guardar, alignment=Qt.AlignCenter)
         self.boton_guardar.setFixedSize(120, 30)
-        # boton_guardar.clicked.connect(guardar)
+
 
         ###### COLUMNA ENTRADA ######
         label_entrada = QLabel("Entrada")
@@ -287,8 +291,8 @@ class SwiperUI(QWidget):
         label_entrada.setAlignment(Qt.AlignCenter)
         label_entrada.setStyleSheet("color: #828282;")
         self.layout_entrada_draganddrop = QVBoxLayout()
-        self.layout_entrada_draganddrop.setContentsMargins(5, 5, 5, 5)
-        self.layout_entrada_draganddrop.setSpacing(5)
+        self.layout_entrada_draganddrop.setContentsMargins(10, 25, 10, 10)
+        self.layout_entrada_draganddrop.setSpacing(10)
         self.layout_entrada_draganddrop.setAlignment(Qt.AlignTop)
         frame_entrada_contenedor = QFrame()
         frame_entrada_contenedor.setFixedSize(300, 450)
@@ -328,8 +332,8 @@ class SwiperUI(QWidget):
         label_salida.setAlignment(Qt.AlignCenter)
         label_salida.setStyleSheet("color: #828282;")
         self.layout_salida_draganddrop = QVBoxLayout()
-        self.layout_salida_draganddrop.setContentsMargins(5, 5, 5, 5)
-        self.layout_salida_draganddrop.setSpacing(5)
+        self.layout_salida_draganddrop.setContentsMargins(10, 25, 10, 10)
+        self.layout_salida_draganddrop.setSpacing(10)
         self.layout_salida_draganddrop.setAlignment(Qt.AlignTop)
         frame_salida_contenedor = QFrame()
         frame_salida_contenedor.setFixedSize(300, 450)
@@ -360,7 +364,16 @@ class SwiperUI(QWidget):
         layout_layouts_procesado.addWidget(label_procesado)
         label_procesado.setAlignment(Qt.AlignCenter)
         label_procesado.setStyleSheet("color: #828282;")
+
+        contenedor_lista = QFrame()
+        contenedor_lista_layout = QVBoxLayout(contenedor_lista)
+        contenedor_lista_layout.setContentsMargins(0,0,0,0)
+        contenedor_lista.setStyleSheet("background: transparent; border: none;")
+
         layout_procesado_draganddrop = QVBoxLayout()
+        layout_procesado_draganddrop.setContentsMargins(10, 25, 10, 10)
+        layout_procesado_draganddrop.setAlignment(Qt.AlignCenter)
+
         frame_procesado_contenedor = QFrame()
         frame_procesado_contenedor.setFixedSize(300, 450)
         frame_procesado_contenedor.setStyleSheet("""
@@ -371,42 +384,54 @@ class SwiperUI(QWidget):
                                         }""")
         frame_procesado_contenedor.setLayout(layout_procesado_draganddrop)
         layout_layouts_procesado.addWidget(frame_procesado_contenedor)
+
+        self.lista_disenos = QListWidget()
+        self.lista_disenos.setStyleSheet("""
+            QListWidget {
+                border: none;  
+                background-color: transparent;  
+            }
+            QListWidget::item {
+                padding: 5px;
+                border-radius: 8px;
+                margin-bottom: 2px;
+            }
+            QListWidget::item:selected {
+                background-color: #e6e6e6;
+                color: #212121;
+            }
+        """)
+        self.lista_disenos.setFixedHeight(425)
+        self.lista_disenos.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        contenedor_lista_layout.addWidget(self.lista_disenos)
+        layout_procesado_draganddrop.addWidget(contenedor_lista)
+
+        self.boton_anadir_disenos = QPushButton("Añadir")
+        self.boton_quitar_disenos = QPushButton("Quitar")
         self.boton_procesar = QPushButton("Procesar")
-        self.boton_quitar_proc = QPushButton("Quitar")
-        self.boton_procesar.setFixedSize(120, 30)
-        self.boton_quitar_proc.setFixedSize(120, 30)
+        self.boton_anadir_disenos.setFixedSize(80, 30)
+        self.boton_procesar.setFixedSize(80, 30)
+        self.boton_quitar_disenos.setFixedSize(80, 30)
+        self.boton_anadir_disenos.setEnabled(False)
         self.boton_procesar.setEnabled(False)
-        self.boton_quitar_proc.setEnabled(False)
-        botones_entrada_h2 = QHBoxLayout()
-        botones_entrada_h2.setContentsMargins(0, 0, 0, 0)
-        botones_entrada_h2.setSpacing(10)
-        botones_entrada_h2.addWidget(self.boton_procesar)
-        botones_entrada_h2.addWidget(self.boton_quitar_proc)
-        layout_layouts_procesado.addLayout(botones_entrada_h2)
-
-
-        # Layout para los esquemas
-        self.layout_canales = QHBoxLayout()
-        self.layout_canales.setContentsMargins(0, 0, 0, 0)
-        self.layout_canales.setSpacing(20)
-
-        canales = []
-        for texto, color in canales:
-            btn = BotonCanal(texto, color)
-            btn.dobleClicSignal.connect(self._controller.esquema_doble_clic)
-            self.grupo_canales.addButton(btn)
-            self.layout_canales.addWidget(btn)
+        self.boton_quitar_disenos.setEnabled(False)
+        botones_procesado_h2 = QHBoxLayout()
+        botones_procesado_h2.setContentsMargins(0, 0, 0, 0)
+        botones_procesado_h2.setSpacing(10)
+        botones_procesado_h2.addWidget(self.boton_anadir_disenos)
+        botones_procesado_h2.addWidget(self.boton_quitar_disenos)
+        botones_procesado_h2.addWidget(self.boton_procesar)
+        layout_layouts_procesado.addLayout(botones_procesado_h2)
 
         return frame_blanco_canales
 
     def _on_toggle_config(self, checked: bool):
         if checked:
-            self.frame_canales.hide()
+            self.frame_principal.hide()
             self.frame_configuracion.show()
         else:
             self.frame_configuracion.hide()
-            self.frame_canales.show()
-
+            self.frame_principal.show()
 
     def _frame_config_admin(self):
 
@@ -431,7 +456,8 @@ class SwiperUI(QWidget):
         primera_columna_layout.addWidget(ruta_salida_label)
         self.ruta_salida_text = QLineEdit()
         primera_columna_layout.addWidget(self.ruta_salida_text)
-        self.ruta_salida_text.setEnabled(False)
+        self.ruta_salida_text.setEnabled(True)
+        self.ruta_salida_text.setReadOnly(True)
         self.ruta_salida_text.setFixedSize(250,30)
 
         self.boton_carpeta_salida = QPushButton("Carpeta de salida")
@@ -544,8 +570,6 @@ class SwiperUI(QWidget):
         self.boton_editar_acceso.setFixedSize(120, 30)
         self.boton_eliminar_acceso.setFixedSize(120, 30)
 
-
-
     def _frame_config(self):
 
         config_layout = QVBoxLayout()
@@ -564,13 +588,13 @@ class SwiperUI(QWidget):
         config_layout.addWidget(ruta_salida_label)
         self.ruta_salida_text = QLineEdit()
         config_layout.addWidget(self.ruta_salida_text)
-        self.ruta_salida_text.setEnabled(False)
+        self.ruta_salida_text.setEnabled(True)
+        self.ruta_salida_text.setReadOnly(True)
         self.ruta_salida_text.setFixedSize(250, 30)
 
         self.boton_carpeta_salida = QPushButton("Carpeta de salida")
         config_layout.addWidget(self.boton_carpeta_salida)
         self.boton_carpeta_salida.setFixedSize(120, 30)
-
 
     def cargar_usuarios(self, lista_usuarios):
 

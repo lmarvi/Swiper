@@ -13,7 +13,7 @@ class EsquemaController:
         if not main_window_controller:
             return None
 
-        btn = self.view.grupo_canales.checkedButton()
+        btn = self.view.grupo_esquemas.checkedButton()
         if not btn:
             QMessageBox.warning(self.view, "Error", "Selecciona un esquema para guardar")
             return None
@@ -39,7 +39,7 @@ class EsquemaController:
 
     def esquema_a_eliminar(self, main_window_controller):
         """Elimina el esquema seleccionado de la BD y de la interfaz"""
-        btn = self.view.grupo_canales.checkedButton()
+        btn = self.view.grupo_esquemas.checkedButton()
         if btn is None:
             QMessageBox.warning(self.view, "Error", "Ningún esquema seleccionado")
             return False
@@ -58,7 +58,7 @@ class EsquemaController:
                 esquema_eliminado = self.esquema_service.eliminar_esquema(esquema_seleccionado_id)
                 if esquema_eliminado:
                     # Eliminar de la interfaz
-                    self.view.grupo_canales.removeButton(btn)
+                    self.view.grupo_esquemas.removeButton(btn)
                     self.view.layout_esquemas_draganddrop.removeWidget(btn)
                     btn.setParent(None)
                     btn.deleteLater()
@@ -81,7 +81,7 @@ class EsquemaController:
             else:
                 # Si no tiene ID es porque es un esquema nuevo que no existe en la BD
                 # Eliminar solo de la interfaz
-                self.view.grupo_canales.removeButton(btn)
+                self.view.grupo_esquemas.removeButton(btn)
                 self.view.layout_esquemas_draganddrop.removeWidget(btn)
                 btn.setParent(None)
                 btn.deleteLater()

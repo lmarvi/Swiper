@@ -7,4 +7,14 @@
     <orderEntry type="jdk" jdkName="Python 3.10" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PyNamespacePackagesService">
+    <option name="namespacePackageFolders">
+      <list>
+        <option value="$MODULE_DIR$/src/widgets" />
+        <option value="$MODULE_DIR$/src/views" />
+        <option value="$MODULE_DIR$/src/ui" />
+        <option value="$MODULE_DIR$/src/controllers" />
+      </list>
+    </option>
+  </component>
 </module>

@@ -36,6 +36,7 @@ class CentroService:
                     print("Advertencia: No se encontró el usuario admin")
 
                 self._conn.commit()
+
                 return nuevo_id
 
         except Exception as e:

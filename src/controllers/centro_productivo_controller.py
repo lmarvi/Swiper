@@ -1,4 +1,6 @@
 from PySide6.QtWidgets import QDialog, QMessageBox
+
+from src.services.acceso_service import AccesoService
 from src.widgets.dialogo_crear_centro import NuevoCentroDialog
 from src.services.centro_service import CentroService
 from src.widgets.dialogo_editar_centro import EditCentroDialog
@@ -6,7 +8,8 @@ from src.widgets.dialogo_editar_centro import EditCentroDialog
 
 class CentroController:
     def __init__(self,view):
-        self.CentroService = CentroService(view)
+        self.centro_service = CentroService(view)
+        self.acceso_service = AccesoService(view)
         self.view = view
 
     def datos_nuevo_centro(self):
@@ -16,11 +19,13 @@ class CentroController:
         if resultado == QDialog.Accepted:
             nuevo_centro = dialog.get_nuevo_centro()
             if nuevo_centro:
-                pasar_datos_centro = self.CentroService.crear_centro(nuevo_centro)
+                pasar_datos_centro = self.centro_service.crear_centro(nuevo_centro)
                 if pasar_datos_centro:
                     QMessageBox.information(self.view, "Información", "Centro creado con éxito")
-                    centros = self.CentroService.obtener_centros()
+                    centros = self.centro_service.obtener_centros()
                     self.view.cargar_centros(centros)
+                    accesos = self.acceso_service.obtener_accesos()
+                    self.view.cargar_accesos(accesos)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido crear el centro")
 
@@ -41,10 +46,10 @@ class CentroController:
         if resultado == QDialog.Accepted:
             centro_editado = dialog.get_centro_editado()
             if centro_editado:
-                actualizar_centro = self.CentroService.editar_centro(centro_editado)
+                actualizar_centro = self.centro_service.editar_centro(centro_editado)
                 if actualizar_centro:
                     QMessageBox.information(self.view, "Información", "Centro productivo editado con éxito")
-                    centros = self.CentroService.obtener_centros()
+                    centros = self.centro_service.obtener_centros()
                     self.view.cargar_centros(centros)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido editar el centro")
@@ -61,10 +66,10 @@ class CentroController:
                 QMessageBox.Yes | QMessageBox.No,
             )
             if respuesta == QMessageBox.Yes:
-                centro_eliminado = self.CentroService.eliminar_centro(id)
+                centro_eliminado = self.centro_service.eliminar_centro(id)
                 if centro_eliminado:
                     QMessageBox.information(self.view, "Información", f"Centro productivo {nombre} eliminado con éxito")
-                    centros = self.CentroService.obtener_centros()
+                    centros = self.centro_service.obtener_centros()
                     self.view.cargar_centros(centros)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido eliminar el centro productivo")
