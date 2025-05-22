@@ -1,8 +1,5 @@
 from PySide6.QtWidgets import QDialog, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox
 
-from src.models.usuario import Usuario
-from src.ui.ui import SwiperUI
-
 
 class EditUsuarioDialog(QDialog):
     def __init__(self, parent=None, usuario_id=None, nombre="", contrasena="", rol=""):

@@ -35,37 +35,6 @@ class ConexionDB:
             self._conn.close()
             self._conn = None
 
-    def consulta_rol(self, usuario):
-
-        try:
-            with self._conn.cursor() as cursor:
-                cursor.execute(
-                    "SELECT rol FROM usuarios WHERE nombre = %s",
-                    (usuario,)
-                )
-                rol = cursor.fetchone()
-                if rol:
-                    return rol[0]
-                else:
-                    return None
-        except Exception as e:
-            print(f"Error en la consulta del rol: {e}")
-            return None
-
-    def consulta_login(self, usuario, contrasena):
-        try:
-            with self._conn.cursor() as cursor:
-                cursor.execute(
-                    "SELECT 1 FROM usuarios WHERE nombre = %s AND contrasena = %s;",
-                    (usuario, contrasena)
-                )
-                exists = cursor.fetchone()
-                return exists
-        except Exception as e:
-            print(f"Error en la consulta del login: {e}")
-            return None
-
-
 
     @contextmanager
     def cursor(self):

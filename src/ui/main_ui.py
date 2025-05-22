@@ -1,28 +1,28 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
-    QPushButton, QSpacerItem, QGraphicsDropShadowEffect, QInputDialog, QButtonGroup, QLineEdit, QTableWidget, \
+    QPushButton, QGraphicsDropShadowEffect, QButtonGroup, QLineEdit, QTableWidget, \
     QTableWidgetItem, QListWidget
 
 from src.services.acceso_service import AccesoService
 from src.services.centro_service import CentroService
 from src.services.usuario_service import UsuarioService
-from src.widgets.boton_canal import BotonCanal
 
 
-class SwiperUI(QWidget):
+
+class MainUI(QWidget):
 
     def __init__(self,esAdmin):
         super().__init__()
-        self.grupo_esquemas = QButtonGroup(self)  # Definir aquí para que sea accesible en toda la clase
+
+
+        # Definir aquí para que sea accesible en toda la clase
+        self.grupo_esquemas = QButtonGroup(self)
         self.grupo_esquemas.setExclusive(True)
         self.grupo_entrada = QButtonGroup(self)
         self.grupo_entrada.setExclusive(True)
         self.grupo_salida = QButtonGroup(self)
         self.grupo_salida.setExclusive(True)
-        self.build_ui(esAdmin)
-
-    def build_ui(self,esAdmin):
 
         # Configurar efecto de sombra
         self.shadow_titulo = QGraphicsDropShadowEffect()
@@ -141,7 +141,7 @@ class SwiperUI(QWidget):
 
         ####### Layout Botones #######
         frame_menu_interno = QFrame()
-        frame_menu_interno.setFixedSize(800, 50)
+        frame_menu_interno.setFixedSize(1450, 50)
         frame_menu_interno.setStyleSheet("""
                     QFrame {
                         background-color: #FFFFFF;
@@ -150,7 +150,7 @@ class SwiperUI(QWidget):
 
         layout_interno_botones = QHBoxLayout()
         layout_interno_botones.setContentsMargins(10, 10, 10, 10)
-        layout_interno_botones.setSpacing(100)
+        layout_interno_botones.setSpacing(40)
         layout_interno_botones.setAlignment(Qt.AlignCenter)
         frame_menu_interno.setLayout(layout_interno_botones)
         layout_botones_menu.addWidget(frame_menu_interno)
@@ -173,7 +173,26 @@ class SwiperUI(QWidget):
         layout_interno_botones.addWidget(self.boton_configuracion, alignment=Qt.AlignCenter)
         self.boton_configuracion.setFixedSize(120, 30)
         self.boton_configuracion.setCheckable(True)
-        self.boton_configuracion.toggled.connect(self._on_toggle_config)
+
+        self.label_usuario = QLabel("Usuario:")
+        layout_interno_botones.addWidget(self.label_usuario, alignment=Qt.AlignCenter)
+
+        self.text_usuario = QLineEdit()
+        layout_interno_botones.addWidget(self.text_usuario, alignment=Qt.AlignCenter)
+        self.text_usuario.setEnabled(False)
+
+        self.label_centro = QLabel("Centro Productivo:")
+        layout_interno_botones.addWidget(self.label_centro, alignment=Qt.AlignCenter)
+
+        self.text_centro = QLineEdit()
+        layout_interno_botones.addWidget(self.text_centro, alignment=Qt.AlignCenter)
+        self.text_centro.setEnabled(False)
+
+        self.boton_salir = QPushButton("Salir")
+        layout_interno_botones.addWidget(self.boton_salir, alignment=Qt.AlignCenter)
+        self.boton_salir.setFixedSize(120, 30)
+
+
 
     def _crear_frame_config(self,esAdmin):
         main_layout_configuracion = QVBoxLayout()
@@ -425,7 +444,7 @@ class SwiperUI(QWidget):
 
         return frame_blanco_canales
 
-    def _on_toggle_config(self, checked: bool):
+    def on_toggle_config(self, checked: bool):
         if checked:
             self.frame_principal.hide()
             self.frame_configuracion.show()

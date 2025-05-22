@@ -5,6 +5,7 @@ import sys
 from PySide6.QtCore import Qt, QFileInfo
 from PySide6.QtWidgets import QInputDialog, QMessageBox, QComboBox, QDialog, QSizePolicy, QFileDialog
 from src.config.colores_config import COLORES_CONFIG
+from src.config.rutas_config import RUTAS_CONFIG
 from src.controllers.esquema_controller import EsquemaController
 from src.services.esquema_service import EsquemaService
 from src.widgets.boton_canal import BotonCanal
@@ -13,6 +14,7 @@ import src.config.rutas_config as rutas_config
 
 class MainWindowController:
     def __init__(self,view):
+        self.login_window = None
         self.view = view
         self.esquema_service = EsquemaService(view)
         self.esquema_controller = EsquemaController(view)
@@ -20,11 +22,16 @@ class MainWindowController:
         self.esquemas_ids = {}
         self.boton_previo = None
 
-    def inicializar_aplicacion(self):
+
+
+    def inicializar_aplicacion(self,nombre_usuario,nombre_centro):
         """Inicializa la aplicación cargando esquemas de la BD"""
-        self.esquema_controller.cargar_esquemas(self)
+        self.esquema_controller.cargar_esquemas(self,nombre_centro)
         # Conectar evento de selección de esquema
         self.view.grupo_esquemas.buttonClicked.connect(self.si_esquema_seleccionado)
+        self.view.text_usuario.setText(nombre_usuario)
+        self.view.text_centro.setText(nombre_centro)
+
 
     def anadir_esquema(self):
 
@@ -72,7 +79,7 @@ class MainWindowController:
         self.habilitar_botones_entrada_mover()
         self.habilitar_botones_salida_mover()
 
-    def eliminar_esquema(self):
+    def eliminar_esquema(self,nombre_centro):
         """Elimina el esquema seleccionado"""
         # Crear una instancia del controlador de esquemas si no existe
         if not hasattr(self, 'esquema_controller'):
@@ -80,7 +87,7 @@ class MainWindowController:
             self.esquema_controller = EsquemaController(self.view)
 
         # Llamar al metodo de eliminar esquema pasando self como el controlador
-        self.esquema_controller.esquema_a_eliminar(self)
+        self.esquema_controller.esquema_a_eliminar(self,nombre_centro)
 
     def habilitar_boton_guardar(self):
         """Actualiza el estado del boton guardar esquema basado en la selección"""
@@ -92,11 +99,11 @@ class MainWindowController:
             # Solo habilitar si hay algo seleccionado y el modo edición está activo
             self.view.boton_guardar.setEnabled(hay_seleccion)
 
-    def datos_nuevo_esquema(self):
+    def datos_nuevo_esquema(self,nombre_centro):
         datos_esquema = EsquemaController(self.view)
         nuevo_esquema = datos_esquema.get_nuevo_esquema(self)
         if nuevo_esquema:
-            esquema_id = self.esquema_service.guardar_esquema(nuevo_esquema)
+            esquema_id = self.esquema_controller.anadir_esquema(nuevo_esquema,nombre_centro)
             if esquema_id:
                 # Actualizar el id del esquema en la lista de esquemas
                 nombre_esquema = self.view.grupo_esquemas.checkedButton().text()
@@ -111,13 +118,12 @@ class MainWindowController:
         btn_seleccionado = self.view.grupo_esquemas.checkedButton()
         if btn_seleccionado:
             nombre_esquema = btn_seleccionado.text()
-            if nombre_esquema in self.esquemas_ids:
-                esquema_id = self.esquemas_ids[nombre_esquema]
-                if esquema_id:
-                    # Limpiar canales actuales
-                    self.limpiar_canales()
-                    # Recargar desde la base de datos
-                    self.esquema_controller.cargar_detalle_esquema(self, esquema_id)
+            # Limpiar canales actuales
+            self.limpiar_canales()
+            # Obtenemos el id del esquema seleccionado:
+            esquema_id = self.esquema_service.get_esquema_id(nombre_esquema)
+            # Recargar desde la base de datos
+            self.esquema_controller.cargar_detalle_esquema(self, esquema_id)
 
     def anadir_entrada(self):
 
@@ -162,13 +168,24 @@ class MainWindowController:
         if resp != QMessageBox.Yes:
             return
 
-        # Quitar el botón del frame y del grupo
-        self.view.frame_entrada.removeWidget(btn)
+        # Obtener el texto del botón que queremos eliminar
+        texto_boton = btn.text()
+
+        # Quitar el botón de la entrada y salida
         self.view.grupo_entrada.removeButton(btn)
+        self.view.grupo_salida.removeButton(btn)
 
         # Limpiar el widget
         btn.setParent(None)
         btn.deleteLater()
+
+        for btn_salida in self.view.grupo_salida.buttons():
+            if btn_salida.text() == texto_boton:
+                # Encontramos el botón correspondiente en salida
+                self.view.grupo_salida.removeButton(btn_salida)
+                btn_salida.setParent(None)
+                btn_salida.deleteLater()
+                break
 
     def habilitar_botones_entrada_mover(self):
         """Actualiza el estado de los botones de mover basado en la selección"""
@@ -360,7 +377,7 @@ class MainWindowController:
         # cambio válido: limpiar y cargar nuevo
         self.boton_previo = boton_nuevo
         self.limpiar_canales()
-        esquema_id = self.esquemas_ids.get(boton_nuevo.text())
+        esquema_id = self.esquema_service.get_esquema_id(boton_nuevo.text())
         self.esquema_controller.cargar_detalle_esquema(self, esquema_id)
         self._habilitar_botones_procesado()
 
@@ -540,12 +557,12 @@ class MainWindowController:
             config_file = os.path.join(config_dir, "rutas_config.py")
 
             # Preparar la ruta para guardarla (escapar las barras invertidas)
-            ruta_escapada = nueva_ruta.replace('\\', '\\\\')
+            ruta_salida = nueva_ruta.replace('\\', '\\\\')
 
             # Crear el contenido del archivo desde cero
             nuevo_contenido = f"""# Configuración de rutas de archivos
                 RUTAS_CONFIG = {{
-                    "ruta_salida": "{ruta_escapada}",  # Ruta seleccionada por el usuario
+                    "ruta_salida": "{ruta_salida}",  # Ruta seleccionada por el usuario
                     "ip_servidor": "localhost"  # Valor por defecto
                 }}
                 """
@@ -559,6 +576,12 @@ class MainWindowController:
         except Exception as e:
             print(f"Error al guardar la ruta en el archivo: {e}")
             raise
+
+    def get_ruta_salida(self):
+        texto_ruta_salida = "ruta_salida"
+        ruta_salida = RUTAS_CONFIG[f"{texto_ruta_salida}"]
+
+        return ruta_salida
 
     def _habilitar_botones_procesado(self):
         """ Habilita los botones de procesado al seleccionar un esquema"""
@@ -576,13 +599,17 @@ class MainWindowController:
         archivos_seleccionados, _= dialogo.getOpenFileNames(self.view, "Seleccionar Archivos", "", "Archivos (*.tif *.psd *.psb)")
 
         if archivos_seleccionados:
-            # Vamos a guardar a mostrar únicamente el nombre de los diseños
-            nombre_disenos = [QFileInfo(ruta_archivo).fileName() for ruta_archivo in archivos_seleccionados]
-            archivos_seleccionados.extend(nombre_disenos)
+            # Creamos un diccionario para almacenar {nombre: ruta_completa}
+            self.disenos_rutas = getattr(self, 'disenos_rutas', {})
 
-            # Mostramos los nombres en el QList
-            for i in nombre_disenos:
-                self.view.lista_disenos.addItem(i)
+            for ruta_completa in archivos_seleccionados:
+                nombre_diseno = QFileInfo(ruta_completa).fileName()
+
+                # Almacenar la relación nombre-ruta
+                self.disenos_rutas[nombre_diseno] = ruta_completa
+
+                # Mostrar solo el nombre en la lista
+                self.view.lista_disenos.addItem(nombre_diseno)
 
     def quitar_disenos(self):
         disenos_seleccionados = self.view.lista_disenos.selectedIndexes()
@@ -597,17 +624,70 @@ class MainWindowController:
             )
 
             if respuesta == QMessageBox.Yes:
+                # Obtener los nombres de los items a eliminar
+                nombres_a_eliminar = []
+                for indice in disenos_seleccionados:
+                    item = self.view.lista_disenos.item(indice.row())
+                    nombres_a_eliminar.append(item.text())
 
+                # Eliminar los items del widget
                 filas_a_eliminar = []
                 for i in disenos_seleccionados:
                     filas_a_eliminar.append(i.row())
 
                 for fila in sorted(filas_a_eliminar, reverse=True):
                     self.view.lista_disenos.takeItem(fila)
+
+                # Eliminar también del diccionario de diseños
+                if hasattr(self, 'disenos_rutas'):
+                    for nombre in nombres_a_eliminar:
+                        if nombre in self.disenos_rutas:
+                            del self.disenos_rutas[nombre]
             else:
                 return
         else:
             return QMessageBox.warning(self.view,"Error","No hay filas seleccionadas")
 
-    def iniciar_procesado(self):
+    def get_lista_disenos(self):
+        """Retorna una lista con la ruta completa de los diseños"""
+        lista_disenos = []
 
+        # Nos aseguramos de que existe el diccionario
+        if not hasattr(self, 'disenos_rutas'):
+            self.disenos_rutas = {}
+
+        # Imprimir el contenido del diccionario para depuración
+        print("Contenido del diccionario disenos_rutas:")
+        for nombre, ruta in self.disenos_rutas.items():
+            print(f"  {nombre}: {ruta}")
+
+        for i in range(self.view.lista_disenos.count()):
+            diseno = self.view.lista_disenos.item(i)
+            nombre_diseno = diseno.text()
+
+            # Obtenemos la ruta completa del diccionario
+            ruta_completa = self.disenos_rutas.get(nombre_diseno)
+
+            if ruta_completa:
+                print(f"  Encontrado: {ruta_completa}")
+                lista_disenos.append(ruta_completa)
+            else:
+                QMessageBox.warning(self.view, "Error", f"No se encuentra la ruta del diseño: {nombre_diseno}")
+        print(f"Lista final de rutas: {lista_disenos}")
+        return lista_disenos
+
+    def deshabilitar_botones_esquemas(self,checked):
+        if checked:
+            self.view.boton_anadir_esquema.setEnabled(False)
+            self.view.boton_editar_esquema.setEnabled(False)
+            self.view.boton_eliminar_esquema.setEnabled(False)
+        else:
+            self.view.boton_anadir_esquema.setEnabled(True)
+            self.view.boton_editar_esquema.setEnabled(True)
+            self.view.boton_eliminar_esquema.setEnabled(True)
+
+    def salir(self):
+        from src.views.login_window import LoginWindow
+        self.login_window = LoginWindow()
+        self.view.parentWidget().close()
+        self.login_window.show()
