@@ -81,12 +81,17 @@ class CentroService:
 
 
     def eliminar_centro(self,id):
-        id = int(id)
+        centro_id = int(id)
 
         try:
             with self._conn.cursor() as cursor:
+                # Primero eliminamos los accesos asociados
                 cursor.execute(
-                    "DELETE FROM centros_productivos WHERE centro_id = %s RETURNING centro_id, nombre",(id,)
+                    "DELETE FROM accesos WHERE centro_id = %s", (centro_id,)
+                )
+                # Luego eliminamos el centro
+                cursor.execute(
+                    "DELETE FROM centros_productivos WHERE centro_id = %s RETURNING centro_id", (centro_id,)
                 )
                 centro_eliminado = cursor.fetchone()
 

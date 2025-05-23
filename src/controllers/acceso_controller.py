@@ -7,7 +7,7 @@ from src.widgets.dialogo_editar_acceso import EditAccesoDialog
 
 class AccesoController:
     def __init__(self,view):
-        self.AccesoService = AccesoService(view)
+        self.acceso_service = AccesoService(view)
         self.view = view
 
 
@@ -18,10 +18,10 @@ class AccesoController:
         if resultado == QDialog.Accepted:
             nuevo_acceso = dialog.get_nuevo_acceso()
             if nuevo_acceso:
-                pasar_datos_acceso = self.AccesoService.crear_acceso(nuevo_acceso)
+                pasar_datos_acceso = self.acceso_service.crear_acceso(nuevo_acceso)
                 if pasar_datos_acceso:
                     QMessageBox.information(self.view, "Información", "Acceso al centro productivo creado con éxito")
-                    accesos = self.AccesoService.obtener_accesos()
+                    accesos = self.acceso_service.obtener_accesos()
                     self.view.cargar_accesos(accesos)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido crear el acceso al centro productivo")
@@ -45,10 +45,10 @@ class AccesoController:
         if resultado == QDialog.Accepted:
             acceso_editado = dialog.get_acceso_editado()
             if acceso_editado:
-                actualizar_acceso = self.AccesoService.editar_acceso(acceso_editado)
+                actualizar_acceso = self.acceso_service.editar_acceso(acceso_editado)
                 if actualizar_acceso:
                     QMessageBox.information(self.view, "Información", "Acceso editado con éxito")
-                    accesos = self.AccesoService.obtener_accesos()
+                    accesos = self.acceso_service.obtener_accesos()
                     self.view.cargar_accesos(accesos)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido editar el acceso")
@@ -65,10 +65,10 @@ class AccesoController:
                 QMessageBox.Yes | QMessageBox.No,
             )
             if respuesta == QMessageBox.Yes:
-                acceso_eliminado = self.AccesoService.eliminar_acceso(id)
+                acceso_eliminado = self.acceso_service.eliminar_acceso(id)
                 if acceso_eliminado:
                     QMessageBox.information(self.view, "Información", f"Acceso eliminado con éxito")
-                    accesos = self.AccesoService.obtener_accesos()
+                    accesos = self.acceso_service.obtener_accesos()
                     self.view.cargar_accesos(accesos)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido eliminar el acceso")

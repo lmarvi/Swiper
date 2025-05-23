@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMessageBox
 from src.models.esquema import Esquema
+from src.services.centro_service import CentroService
 from src.services.esquema_service import EsquemaService
 
 
@@ -8,6 +9,25 @@ class EsquemaController:
 
         self.esquema_service = EsquemaService(view)
         self.view = view
+
+    def anadir_esquema(self,nuevo_esquema,nombre_centro):
+        esquema_id = self.esquema_service.guardar_esquema(nuevo_esquema)
+        if esquema_id:
+            self.esquema_service.anadir_esquema_a_centro(esquema_id, nombre_centro)
+            QMessageBox.information(
+                self.view,
+                "Éxito",
+                f"Esquema '{nuevo_esquema.nombre_esquema}' guardado correctamente."
+            )
+            self.view.cargar_datos_centros()
+            return True
+        else:
+            QMessageBox.warning(
+                self.view,
+                "Error",
+                "No se ha podido guardar el esquema."
+            )
+            return False
 
     def get_nuevo_esquema(self, main_window_controller):
         if not main_window_controller:
@@ -37,14 +57,24 @@ class EsquemaController:
         )
         return nuevo_esquema
 
-    def esquema_a_eliminar(self, main_window_controller):
-        """Elimina el esquema seleccionado de la BD y de la interfaz"""
+    def get_nombre_esquema(self):
         btn = self.view.grupo_esquemas.checkedButton()
         if btn is None:
             QMessageBox.warning(self.view, "Error", "Ningún esquema seleccionado")
             return False
 
         nombre_esquema_seleccionado = btn.text()
+        return nombre_esquema_seleccionado
+
+    def esquema_a_eliminar(self, main_window_controller,nombre_centro):
+        """Elimina el esquema seleccionado de la BD y de la interfaz"""
+        btn = self.view.grupo_esquemas.checkedButton()
+        if btn is None:
+            QMessageBox.warning(self.view, "Error", "Ningún esquema seleccionado")
+            return False
+
+        nombre_esquema_seleccionado = self.get_nombre_esquema()
+
         respuesta = QMessageBox.question(
             self.view,
             "Confirmar acción",
@@ -55,7 +85,8 @@ class EsquemaController:
         if respuesta == QMessageBox.Yes:
             esquema_seleccionado_id = self.esquema_service.get_esquema_id(nombre_esquema_seleccionado)
             if esquema_seleccionado_id:
-                esquema_eliminado = self.esquema_service.eliminar_esquema(esquema_seleccionado_id)
+                # Eliminar esquema de la db
+                esquema_eliminado = self.esquema_service.eliminar_esquema(esquema_seleccionado_id,nombre_centro)
                 if esquema_eliminado:
                     # Eliminar de la interfaz
                     self.view.grupo_esquemas.removeButton(btn)
@@ -69,7 +100,7 @@ class EsquemaController:
 
                     # Limpiar los canales de entrada y salida
                     main_window_controller.limpiar_canales()
-
+                    self.view.cargar_datos_centros()
                     QMessageBox.information(
                         self.view,
                         "Información",
@@ -102,9 +133,20 @@ class EsquemaController:
 
         return False
 
-    def cargar_esquemas(self, main_window_controller):
-        """Carga todos los esquemas de la base de datos y los muestra en la interfaz"""
-        esquemas = self.esquema_service.obtener_todos_esquemas()
+    def obtener_id_esquema_seleccionado(self):
+        """Obtiene el ID del esquema actualmente seleccionado"""
+        btn = self.view.grupo_canales.checkedButton()
+        if btn is None:
+            return None
+
+        nombre_esquema = btn.text()
+        # Buscamos el ID en la db
+        esquema_id = self.esquema_service.get_esquema_id(nombre_esquema)
+        return esquema_id
+
+    def cargar_esquemas(self, main_window_controller, nombre_centro):
+        """Carga los esquemas de la base de datos y los muestra en la interfaz"""
+        esquemas = self.esquema_service.obtener_todos_esquemas(nombre_centro)
         if esquemas:
             # Limpiar los esquemas actuales antes de cargar los nuevos
             main_window_controller.limpiar_esquemas()
@@ -128,6 +170,5 @@ class EsquemaController:
             # Cargar canales de entrada y salida
             main_window_controller.cargar_canales_entrada(esquema['canales_entrada'])
             main_window_controller.cargar_canales_salida(esquema['canales_salida'])
-
             return True
         return False

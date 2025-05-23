@@ -54,7 +54,7 @@ class CentroController:
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido editar el centro")
 
-    def id_centro(self):
+    def elminar_id_centro(self):
         fila_seleccionada = self.view.tabla_centros.currentRow()
         nombre = self.view.tabla_centros.item(fila_seleccionada, 1).text()
         id = self.view.tabla_centros.item(fila_seleccionada, 0).text()
@@ -71,6 +71,8 @@ class CentroController:
                     QMessageBox.information(self.view, "Información", f"Centro productivo {nombre} eliminado con éxito")
                     centros = self.centro_service.obtener_centros()
                     self.view.cargar_centros(centros)
+                    accesos = self.acceso_service.obtener_accesos()
+                    self.view.cargar_accesos(accesos)
                 else:
                     QMessageBox.warning(self.view, "Error", "No se ha podido eliminar el centro productivo")
 
