@@ -16,7 +16,8 @@ def inicializar_rutas_config():
             print("Creando archivo de configuración de rutas...")
 
             # Contenido por defecto del archivo
-            default_content = """# Configuración de rutas de archivos
+            default_content = """
+                # Configuración de rutas de archivos
                 RUTAS_CONFIG = {
                     "ruta_salida": "",  # Se establecerá en tiempo de ejecución
                     "ip_servidor": "localhost"  # Valor por defecto
