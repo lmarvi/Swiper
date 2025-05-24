@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Swiper")
-        self.setGeometry(200, 200, 1500, 850)
+        self.setGeometry(200, 100, 1500, 900)
 
         # Icono de la ventana
         logo = QIcon()

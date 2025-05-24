@@ -12,7 +12,7 @@ class LoginWindow(QWidget):
 
         super().__init__()
         self.setWindowTitle("Login")
-        self.setGeometry(700, 400, 200, 250)
+        self.setGeometry(850, 350, 100, 150)
 
         main_layout = QVBoxLayout(self)
         self.ui = LoginUI()

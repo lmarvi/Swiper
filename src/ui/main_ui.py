@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QSizePolicy, \
     QPushButton, QGraphicsDropShadowEffect, QButtonGroup, QLineEdit, QTableWidget, \
-    QTableWidgetItem, QListWidget
+    QTableWidgetItem, QListWidget, QSpacerItem
 
 from src.services.acceso_service import AccesoService
 from src.services.centro_service import CentroService
@@ -42,25 +42,13 @@ class MainUI(QWidget):
         self.shadow_conf.setOffset(2, 2)
         self.shadow_conf.setColor(Qt.gray)
 
-        main = QVBoxLayout(self)
-        main.setContentsMargins(0,0,0,20)
-        main.setSpacing(10)
-
         # Widget principal y layout
         main_widget = QWidget()
         main_widget.setStyleSheet("background-color: rgb(235, 235, 235);")
 
-        self.main_layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(10)
-        main_widget.setLayout(self.main_layout)
-        main.addWidget(main_widget)
-
-        self.frame_configuracion = self._crear_frame_config(esAdmin)
-        self.frame_principal = self._crear_frame_principal()
-        main.addWidget(self.frame_principal)
-        main.addWidget(self.frame_configuracion)
-        self.frame_configuracion.hide()
 
         # Layout superior con logo y título
         layout_titulo = QHBoxLayout()
@@ -82,6 +70,7 @@ class MainUI(QWidget):
 
         # Contenedor para el título con margen para la sombra
         container_titulo = QFrame()
+
         # El contenedor es más grande para permitir que se vea la sombra
         container_titulo.setFixedSize(280, 100)
         container_titulo.setStyleSheet("background-color: transparent;")
@@ -122,6 +111,9 @@ class MainUI(QWidget):
         layout_titulo.addWidget(container_titulo)
         layout_titulo.addStretch()
 
+        spacer = QSpacerItem(0, 30, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.main_layout.addItem(spacer)
+
         ####### Layout Botones #######
         frame_menu = QFrame()
         frame_menu.setFixedHeight(65)
@@ -134,8 +126,6 @@ class MainUI(QWidget):
         frame_menu.setGraphicsEffect(self.shadow_menu)
 
         layout_botones_menu = QHBoxLayout(frame_menu)
-        layout_botones_menu.setContentsMargins(0, 0, 0, 0)
-        layout_botones_menu.setSpacing(0)
         frame_menu.setLayout(layout_botones_menu)
         self.main_layout.addWidget(frame_menu)
 
@@ -192,7 +182,11 @@ class MainUI(QWidget):
         layout_interno_botones.addWidget(self.boton_salir, alignment=Qt.AlignCenter)
         self.boton_salir.setFixedSize(120, 30)
 
-
+        self.frame_configuracion = self._crear_frame_config(esAdmin)
+        self.frame_principal = self._crear_frame_principal()
+        self.main_layout.addWidget(self.frame_principal)
+        self.main_layout.addWidget(self.frame_configuracion)
+        self.frame_configuracion.hide()
 
     def _crear_frame_config(self,esAdmin):
         main_layout_configuracion = QVBoxLayout()
@@ -200,7 +194,7 @@ class MainUI(QWidget):
         main_layout_configuracion.setSpacing(0)
         self.main_layout.addLayout(main_layout_configuracion)
         frame_blanco_configuracion = QFrame()
-        frame_blanco_configuracion.setFixedHeight(550)
+        frame_blanco_configuracion.setFixedHeight(620)
         frame_blanco_configuracion.setFrameShape(QFrame.NoFrame)
         frame_blanco_configuracion.setStyleSheet("""
                                             QFrame {
@@ -223,11 +217,11 @@ class MainUI(QWidget):
 
     def _crear_frame_principal(self):
         main_layout_canales = QVBoxLayout()
-        main_layout_canales.setContentsMargins(0, 0, 0, 30)
+        main_layout_canales.setContentsMargins(0, 0, 0, 0)
         main_layout_canales.setSpacing(0)
         self.main_layout.addLayout(main_layout_canales)
         frame_blanco_canales = QFrame()
-        frame_blanco_canales.setFixedHeight(550)
+        frame_blanco_canales.setFixedHeight(620)
         frame_blanco_canales.setFrameShape(QFrame.NoFrame)
         frame_blanco_canales.setStyleSheet("""
                                 QFrame {
@@ -454,58 +448,254 @@ class MainUI(QWidget):
 
     def _frame_config_admin(self):
 
-        config_layout = QHBoxLayout()
-        self.layout_general_configuracion.addLayout(config_layout)
+        config_layout_principal = QHBoxLayout()
+        config_layout_principal.setContentsMargins(10, 10, 10, 10)
+        config_layout_principal.setSpacing(10)
+        self.layout_general_configuracion.addLayout(config_layout_principal)
 
         # Primera columna: ajustes básicos
-
         primera_columna_layout = QVBoxLayout()
-        config_layout.addLayout(primera_columna_layout)
+        primera_columna_layout.setSpacing(15)
+        primera_columna_layout.setAlignment(Qt.AlignTop)
+        config_layout_principal.addLayout(primera_columna_layout)
 
+        # Frame contenedor para configuración básica
+        frame_config_basica = QFrame()
+        frame_config_basica.setFixedSize(320, 400)
+        frame_config_basica.setStyleSheet("""
+                QFrame {
+                    background-color: #FAFAFA;
+                    border: 1px solid #E0E0E0;
+                    border-radius: 16px;
+                }
+            """)
+
+        primera_columna_layout.addWidget(frame_config_basica)
+
+        # Layout interno del frame de configuración
+        layout_interno_config = QVBoxLayout(frame_config_basica)
+        layout_interno_config.setContentsMargins(20, 20, 20, 20)
+        layout_interno_config.setSpacing(20)
+
+        # Título de la sección
+        titulo_config = QLabel("Configuración del Sistema")
+        titulo_config.setAlignment(Qt.AlignCenter)
+        titulo_config.setStyleSheet("""
+                QLabel {
+                    font-weight: bold;
+                    font-size: 16px;
+                    padding: 6px;
+                    background-color: #F0F0F0;
+                    color: #212121;;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
+            """)
+        layout_interno_config.addWidget(titulo_config)
+
+        # IP Servidor
         ip_label = QLabel("IP Servidor:")
-        primera_columna_layout.addWidget(ip_label)
-        ip_label.setContentsMargins(5,0,0,0)
+        ip_label.setStyleSheet("""
+                    QLabel {
+                        font-weight: 600;
+                        color: #424242;
+                        margin-bottom: 5px;
+                        background: transparent;
+                        border: none;
+                    }
+                """)
+        layout_interno_config.addWidget(ip_label)
 
         self.ip_text = QLineEdit()
-        primera_columna_layout.addWidget(self.ip_text)
-        self.ip_text.setFixedSize(200,30)
+        self.ip_text.setFixedSize(280, 35)
+        self.ip_text.setStyleSheet("""
+                QLineEdit {
+                    background-color: #FFFFFF;
+                    border: 2px solid #E0E0E0;
+                    border-radius: 8px;
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    color: #212121;
+                }
+                QLineEdit:focus {
+                    border-color: #888888;
+                }
+                QLineEdit:disabled {
+                    background-color: #F5F5F5;
+                    color: #9E9E9E;
+                }
+            """)
         self.ip_text.setEnabled(False)
+        layout_interno_config.addWidget(self.ip_text)
 
+        # Carpeta de Salida
         ruta_salida_label = QLabel("Carpeta de salida:")
-        primera_columna_layout.addWidget(ruta_salida_label)
+        ruta_salida_label.setStyleSheet("""
+                QLabel {
+            font-weight: 600;
+            color: #424242;
+            margin-bottom: 5px;
+            background: transparent;
+            border: none;
+            }
+        """)
+        layout_interno_config.addWidget(ruta_salida_label)
+
         self.ruta_salida_text = QLineEdit()
-        primera_columna_layout.addWidget(self.ruta_salida_text)
         self.ruta_salida_text.setEnabled(True)
         self.ruta_salida_text.setReadOnly(True)
-        self.ruta_salida_text.setFixedSize(250,30)
+        self.ruta_salida_text.setFixedSize(280, 35)
+        self.ruta_salida_text.setStyleSheet("""
+                QLineEdit {
+                    background-color: #FFFFFF;
+                    border: 2px solid #E0E0E0;
+                    border-radius: 8px;
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    color: #212121;
+                }
+                QLineEdit:focus {
+                    border-color: #888888;
+                }
+                QLineEdit:disabled {
+                    background-color: #F5F5F5;
+                    color: #9E9E9E;
+                }
+            """)
+        layout_interno_config.addWidget(self.ruta_salida_text)
 
-        self.boton_carpeta_salida = QPushButton("Carpeta de salida")
-        primera_columna_layout.addWidget(self.boton_carpeta_salida)
-        self.boton_carpeta_salida.setFixedSize(120, 30)
+        # Botón carpeta de salida
+        self.boton_carpeta_salida = QPushButton("Seleccionar Salida")
+        self.boton_carpeta_salida.setFixedSize(150, 30)
+        self.boton_carpeta_salida.setStyleSheet("""
+                QPushButton {
+                    background-color: #F0F0F0;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    padding: 8px 16px;
+                }
+                QPushButton:hover {
+                    background-color: #D4D4D4;
+                }
+                QPushButton:pressed {
+                    background-color: #BDBDBD;
+                }
+            """)
+        layout_interno_config.addWidget(self.boton_carpeta_salida)
+
+        # Espaciador
+        layout_interno_config.addStretch()
 
         # Segunda columna: tabla de usuarios
         segunda_columna_layout = QVBoxLayout()
-        config_layout.addLayout(segunda_columna_layout)
+        segunda_columna_layout.setSpacing(15)
+        segunda_columna_layout.setAlignment(Qt.AlignTop)
+        config_layout_principal.addLayout(segunda_columna_layout)
 
+        # Frame contenedor para usuarios
+        frame_usuarios = QFrame()
+        frame_usuarios.setFixedSize(1000, 280)
+        frame_usuarios.setStyleSheet("""
+                QFrame {
+                    background-color: #FAFAFA;
+                    border: 1px solid #E0E0E0;
+                    border-radius: 16px;
+                }
+            """)
+
+        """ SEGUNDA COLUMNA """
+        segunda_columna_layout.addWidget(frame_usuarios)
+
+        # Layout interno usuarios
+        layout_usuarios = QVBoxLayout(frame_usuarios)
+        layout_usuarios.setContentsMargins(20, 15, 20, 15)
+        layout_usuarios.setSpacing(10)
+
+        # Tabla Usuarios
         label_usuarios = QLabel("Usuarios")
         label_usuarios.setAlignment(Qt.AlignCenter)
-        label_usuarios.setStyleSheet("font-weight: bold; color: #212121;")
-        segunda_columna_layout.addWidget(label_usuarios)
+        label_usuarios.setStyleSheet("""
+                QLabel {
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #212121;
+                    padding: 6px;
+                    background-color: #F0F0F0;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
+            """)
+        layout_usuarios.addWidget(label_usuarios)
 
         self.tabla_usuarios = QTableWidget()
         self.tabla_usuarios.setColumnCount(5)
-        cabecera = ["id", "Nombre", "Contraseña", "Rol", "Fecha creacion usuario"]
+        self.tabla_usuarios.setFixedHeight(140)
+        cabecera = ["id", "Nombre", "Contraseña", "Rol", "Fecha Creación"]
         self.tabla_usuarios.setHorizontalHeaderLabels(cabecera)
         self.tabla_usuarios.horizontalHeader().setStretchLastSection(True)
         self.tabla_usuarios.setSelectionBehavior(QTableWidget.SelectRows)
         self.tabla_usuarios.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tabla_usuarios.setAlternatingRowColors(True)
-
-        segunda_columna_layout.addWidget(self.tabla_usuarios)
         self.cargar_datos_usuarios()
 
+        # Configurar columnas
+        header = self.tabla_usuarios.horizontalHeader()
+        header.setStretchLastSection(True)
+        header.resizeSection(0, 60)
+        header.resizeSection(1, 150)
+        header.resizeSection(2, 150)
+        header.resizeSection(3, 150)
+
+        self.tabla_usuarios.setStyleSheet("""
+                QTableWidget {
+                    background-color: #FFFFFF;
+                    border: 1px solid #E0E0E0;
+                    selection-background-color: #E8E8E8;
+                    alternate-background-color: #FAFAFA;
+                }
+                QTableWidget::item {
+                    padding: 6px;
+                    border: none;
+                }
+                QTableWidget::item:selected {
+                    background-color: #E8E8E8;
+                    color: #212121;
+                }
+                QHeaderView::section {
+                    background-color: #F5F5F5;
+                    color: #424242;
+                    font-weight: bold;
+                    font-size: 12px;
+                    padding: 8px 6px;
+                }
+            """)
+        layout_usuarios.addWidget(self.tabla_usuarios)
+
+        # Botones edición usuarios
         layout_botones_usuarios = QHBoxLayout()
-        segunda_columna_layout.addLayout(layout_botones_usuarios)
+        layout_botones_usuarios.setSpacing(15)
+        layout_usuarios.addLayout(layout_botones_usuarios)
+
+        estilo_botones = """
+                QPushButton {
+                    background-color: #F0F0F0;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    padding: 8px 16px;
+                }
+                QPushButton:hover {
+                    background-color: #D4D4D4;
+                }
+                QPushButton:pressed {
+                    background-color: #BDBDBD;
+                }
+            """
 
         self.boton_anadir_usuario = QPushButton("Añadir usuario")
         self.boton_editar_usuario = QPushButton("Editar usuario")
@@ -516,27 +706,64 @@ class MainUI(QWidget):
         self.boton_anadir_usuario.setFixedSize(120,30)
         self.boton_editar_usuario.setFixedSize(120, 30)
         self.boton_eliminar_usuario.setFixedSize(120, 30)
+        self.boton_anadir_usuario.setStyleSheet(estilo_botones)
+        self.boton_editar_usuario.setStyleSheet(estilo_botones)
+        self.boton_eliminar_usuario.setStyleSheet(estilo_botones)
+
+        # Espaciador
+        layout_botones_usuarios.addStretch()
+
+        # Centros Productivos y Accesos
+        # Frame contenedor
+        frame_centros_accesos = QFrame()
+        frame_centros_accesos.setFixedSize(1000, 280)
+        frame_centros_accesos.setStyleSheet("""
+                QFrame {
+                    background-color: #FAFAFA;
+                    border: 1px solid #E0E0E0;
+                    border-radius: 16px;
+                }
+            """)
+
+        segunda_columna_layout.addWidget(frame_centros_accesos)
 
         # Layout para centros productivos y accesos:
-
-        layout_centros_accesos = QHBoxLayout()
+        layout_centros_accesos = QHBoxLayout(frame_centros_accesos)
+        layout_centros_accesos.setContentsMargins(20, 15, 20, 15)
+        layout_centros_accesos.setSpacing(25)
         segunda_columna_layout.addLayout(layout_centros_accesos)
 
         layout_centros = QVBoxLayout()
         layout_accesos = QVBoxLayout()
         layout_centros_accesos.addLayout(layout_centros)
         layout_centros_accesos.addLayout(layout_accesos)
+        layout_centros.setSpacing(8)
+        layout_accesos.setSpacing(8)
 
         # Tabla centros
-
         label_centros = QLabel("Centros Productivos")
         label_centros.setAlignment(Qt.AlignCenter)
-        label_centros.setStyleSheet("font-weight: bold; color: #212121;")
+        label_centros.setFixedHeight(32)
+        label_centros.setStyleSheet("""
+                QLabel {
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #212121;
+                    padding: 6px;
+                    background-color: #F0F0F0;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
+            """)
         layout_centros.addWidget(label_centros)
 
         self.tabla_centros = QTableWidget()
         self.tabla_centros.setColumnCount(4)
-        cabecera = ["id", "Nombre Centro Productivo","Esquemas Centro Productivo","Fecha creación centro"]
+        self.tabla_centros.setFixedHeight(140)
+        self.tabla_centros.setFixedWidth(465)
+        cabecera = ["id", "Centro","Esquemas","Fecha Creación"]
         self.tabla_centros.setHorizontalHeaderLabels(cabecera)
         self.tabla_centros.horizontalHeader().setStretchLastSection(True)
         self.tabla_centros.setSelectionBehavior(QTableWidget.SelectRows)
@@ -544,30 +771,81 @@ class MainUI(QWidget):
         self.tabla_centros.setAlternatingRowColors(True)
         layout_centros.addWidget(self.tabla_centros)
         self.cargar_datos_centros()
+        self.tabla_centros.setStyleSheet("""
+                QTableWidget {
+                    background-color: #FFFFFF;
+                    border: 1px solid #E0E0E0;
+                    selection-background-color: #E8E8E8;
+                    alternate-background-color: #FAFAFA;
+                }
+                QTableWidget::item {
+                    padding: 6px;
+                    border: none;
+                }
+                QTableWidget::item:selected {
+                    background-color: #E8E8E8;
+                    color: #212121;
+                }
+                QHeaderView::section {
+                    background-color: #F5F5F5;
+                    color: #424242;
+                    font-weight: bold;
+                    font-size: 12px;
+                    padding: 8px 6px;
+                }
+            """)
 
+        # Configuración ancho columnas centros
+        header_centros = self.tabla_centros.horizontalHeader()
+        header_centros.setStretchLastSection(True)
+        header_centros.resizeSection(0, 40)
+        header_centros.resizeSection(1, 140)
+        header_centros.resizeSection(2, 140)
+
+
+        # Botones Centros
         layout_botones_centros = QHBoxLayout()
+        layout_botones_centros.setSpacing(5)
         layout_centros.addLayout(layout_botones_centros)
 
         self.boton_anadir_centro = QPushButton("Añadir centro")
         self.boton_editar_centro = QPushButton("Editar centro")
         self.boton_eliminar_centro = QPushButton("Eliminar centro")
-        layout_botones_centros.addWidget(self.boton_anadir_centro)
-        layout_botones_centros.addWidget(self.boton_editar_centro)
-        layout_botones_centros.addWidget(self.boton_eliminar_centro)
+        layout_botones_centros.addWidget(self.boton_anadir_centro,alignment=Qt.AlignCenter)
+        layout_botones_centros.addWidget(self.boton_editar_centro,alignment=Qt.AlignCenter)
+        layout_botones_centros.addWidget(self.boton_eliminar_centro,alignment=Qt.AlignCenter)
         self.boton_anadir_centro.setFixedSize(120, 30)
         self.boton_editar_centro.setFixedSize(120, 30)
         self.boton_eliminar_centro.setFixedSize(120, 30)
-
+        self.boton_anadir_centro.setStyleSheet(estilo_botones)
+        self.boton_editar_centro.setStyleSheet(estilo_botones)
+        self.boton_eliminar_centro.setStyleSheet(estilo_botones)
+        layout_botones_centros.addStretch()
 
         # Tabla accesos
         label_accesos = QLabel("Accesos a Centros Productivos")
         label_accesos.setAlignment(Qt.AlignCenter)
-        label_accesos.setStyleSheet("font-weight: bold; color: #212121;")
+        label_accesos.setFixedHeight(32)
+        label_accesos.setStyleSheet("""
+                QLabel {
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #212121;
+                    padding: 6px;
+                    background-color: #F0F0F0;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
+            """)
         layout_accesos.addWidget(label_accesos)
 
         self.tabla_accesos = QTableWidget()
         self.tabla_accesos.setColumnCount(4)
-        cabecera = ["id", "Nombre Usuario", "Acceso", "Fecha creación acceso"]
+        self.tabla_accesos.setFixedHeight(140)
+        self.tabla_accesos.setFixedWidth(465)
+        cabecera = ["id", "Usuario", "Centro", "Fecha Creación"]
         self.tabla_accesos.setHorizontalHeaderLabels(cabecera)
         self.tabla_accesos.horizontalHeader().setStretchLastSection(True)
         self.tabla_accesos.setSelectionBehavior(QTableWidget.SelectRows)
@@ -575,8 +853,40 @@ class MainUI(QWidget):
         self.tabla_accesos.setAlternatingRowColors(True)
         layout_accesos.addWidget(self.tabla_accesos)
         self.cargar_datos_accesos()
+        self.tabla_accesos.setStyleSheet("""
+                QTableWidget {
+                    background-color: #FFFFFF;
+                    border: 1px solid #E0E0E0;
+                    selection-background-color: #E8E8E8;
+                    alternate-background-color: #FAFAFA;
+                }
+                QTableWidget::item {
+                    padding: 6px;
+                    border: none;
+                }
+                QTableWidget::item:selected {
+                    background-color: #E8E8E8;
+                    color: #212121;
+                }
+                QHeaderView::section {
+                    background-color: #F5F5F5;
+                    color: #424242;
+                    font-weight: bold;
+                    font-size: 12px;
+                    padding: 8px 6px;
+                }
+            """)
 
+        # Configurar columnas accesos
+        header_accesos = self.tabla_accesos.horizontalHeader()
+        header_accesos.setStretchLastSection(True)
+        header_accesos.resizeSection(0, 40)
+        header_accesos.resizeSection(1, 140)
+        header_accesos.resizeSection(2, 140)
+
+        # Botones accesos
         layout_botones_accesos = QHBoxLayout()
+        layout_botones_accesos.setSpacing(5)
         layout_accesos.addLayout(layout_botones_accesos)
 
         self.boton_anadir_acceso = QPushButton("Añadir acceso")
@@ -588,32 +898,145 @@ class MainUI(QWidget):
         self.boton_anadir_acceso.setFixedSize(120, 30)
         self.boton_editar_acceso.setFixedSize(120, 30)
         self.boton_eliminar_acceso.setFixedSize(120, 30)
+        self.boton_anadir_acceso.setStyleSheet(estilo_botones)
+        self.boton_editar_acceso.setStyleSheet(estilo_botones)
+        self.boton_eliminar_acceso.setStyleSheet(estilo_botones)
+        layout_botones_accesos.addStretch()
 
     def _frame_config(self):
 
+        # Configuración del Sistema
         config_layout = QVBoxLayout()
+        config_layout.setSpacing(15)
+        config_layout.setAlignment(Qt.AlignCenter)
         self.layout_general_configuracion.addLayout(config_layout)
 
+        # Frame contenedor para configuración básica
+        frame_config_basica = QFrame()
+        frame_config_basica.setFixedSize(320, 400)
+        frame_config_basica.setStyleSheet("""
+                        QFrame {
+                            background-color: #FAFAFA;
+                            border: 1px solid #E0E0E0;
+                            border-radius: 16px;
+                        }
+                    """)
+
+        config_layout.addWidget(frame_config_basica)
+
+        # Layout interno del frame de configuración
+        layout_interno_config = QVBoxLayout(frame_config_basica)
+        layout_interno_config.setContentsMargins(20, 20, 20, 20)
+        layout_interno_config.setSpacing(20)
+
+        # Título de la sección
+        titulo_config = QLabel("Configuración del Sistema")
+        titulo_config.setAlignment(Qt.AlignCenter)
+        titulo_config.setStyleSheet("""
+                        QLabel {
+                            font-weight: bold;
+                            font-size: 16px;
+                            padding: 6px;
+                            background-color: #F0F0F0;
+                            color: #212121;;
+                            border-radius: 8px;
+                            margin-bottom: 5px;
+                            min-height: 20px;
+                            max-height: 20px;
+                        }
+                    """)
+        layout_interno_config.addWidget(titulo_config)
+
+        # IP Servidor
         ip_label = QLabel("IP Servidor:")
-        config_layout.addWidget(ip_label)
-        ip_label.setContentsMargins(5, 0, 0, 0)
+        ip_label.setStyleSheet("""
+                            QLabel {
+                                font-weight: 600;
+                                color: #424242;
+                                margin-bottom: 5px;
+                                background: transparent;
+                                border: none;
+                            }
+                        """)
+        layout_interno_config.addWidget(ip_label)
 
         self.ip_text = QLineEdit()
-        config_layout.addWidget(self.ip_text)
-        self.ip_text.setFixedSize(200, 30)
+        self.ip_text.setFixedSize(280, 35)
+        self.ip_text.setStyleSheet("""
+                        QLineEdit {
+                            background-color: #FFFFFF;
+                            border: 2px solid #E0E0E0;
+                            border-radius: 8px;
+                            padding: 8px 12px;
+                            font-size: 14px;
+                            color: #212121;
+                        }
+                        QLineEdit:focus {
+                            border-color: #888888;
+                        }
+                        QLineEdit:disabled {
+                            background-color: #F5F5F5;
+                            color: #9E9E9E;
+                        }
+                    """)
         self.ip_text.setEnabled(False)
+        layout_interno_config.addWidget(self.ip_text)
 
+        # Carpeta de Salida
         ruta_salida_label = QLabel("Carpeta de salida:")
-        config_layout.addWidget(ruta_salida_label)
+        ruta_salida_label.setStyleSheet("""
+                        QLabel {
+                    font-weight: 600;
+                    color: #424242;
+                    margin-bottom: 5px;
+                    background: transparent;
+                    border: none;
+                    }
+                """)
+        layout_interno_config.addWidget(ruta_salida_label)
+
         self.ruta_salida_text = QLineEdit()
-        config_layout.addWidget(self.ruta_salida_text)
         self.ruta_salida_text.setEnabled(True)
         self.ruta_salida_text.setReadOnly(True)
-        self.ruta_salida_text.setFixedSize(250, 30)
+        self.ruta_salida_text.setFixedSize(280, 35)
+        self.ruta_salida_text.setStyleSheet("""
+                        QLineEdit {
+                            background-color: #FFFFFF;
+                            border: 2px solid #E0E0E0;
+                            border-radius: 8px;
+                            padding: 8px 12px;
+                            font-size: 14px;
+                            color: #212121;
+                        }
+                        QLineEdit:focus {
+                            border-color: #888888;
+                        }
+                        QLineEdit:disabled {
+                            background-color: #F5F5F5;
+                            color: #9E9E9E;
+                        }
+                    """)
+        layout_interno_config.addWidget(self.ruta_salida_text)
 
-        self.boton_carpeta_salida = QPushButton("Carpeta de salida")
-        config_layout.addWidget(self.boton_carpeta_salida)
-        self.boton_carpeta_salida.setFixedSize(120, 30)
+        # Botón carpeta de salida
+        self.boton_carpeta_salida = QPushButton("Seleccionar Salida")
+        self.boton_carpeta_salida.setFixedSize(150, 30)
+        self.boton_carpeta_salida.setStyleSheet("""
+                        QPushButton {
+                            background-color: #F0F0F0;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 12px;
+                            padding: 8px 16px;
+                        }
+                        QPushButton:hover {
+                            background-color: #D4D4D4;
+                        }
+                        QPushButton:pressed {
+                            background-color: #BDBDBD;
+                        }
+                    """)
+        layout_interno_config.addWidget(self.boton_carpeta_salida)
 
     def cargar_usuarios(self, lista_usuarios):
 
