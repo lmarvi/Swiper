@@ -1,6 +1,6 @@
 import os
 import sys
-
+import textwrap
 
 from PySide6.QtCore import Qt, QFileInfo
 from PySide6.QtWidgets import QInputDialog, QMessageBox, QComboBox, QDialog, QSizePolicy, QFileDialog
@@ -22,8 +22,6 @@ class MainWindowController:
         self.esquemas_ids = {}
         self.boton_previo = None
 
-
-
     def inicializar_aplicacion(self,nombre_usuario,nombre_centro):
         """Inicializa la aplicación cargando esquemas de la BD"""
         self.esquema_controller.cargar_esquemas(self,nombre_centro)
@@ -31,7 +29,6 @@ class MainWindowController:
         self.view.grupo_esquemas.buttonClicked.connect(self.si_esquema_seleccionado)
         self.view.text_usuario.setText(nombre_usuario)
         self.view.text_centro.setText(nombre_centro)
-
 
     def anadir_esquema(self):
 
@@ -520,7 +517,7 @@ class MainWindowController:
                 ruta_actual
             )
 
-            # Si el usuario seleccionó una carpeta
+            # Si el usuario ha seleccionado una carpeta
             if nueva_ruta:
                 # Actualizar el campo de texto
                 self.view.ruta_salida_text.setText(nueva_ruta)
@@ -560,12 +557,13 @@ class MainWindowController:
             ruta_salida = nueva_ruta.replace('\\', '\\\\')
 
             # Crear el contenido del archivo desde cero
-            nuevo_contenido = f"""# Configuración de rutas de archivos
-                RUTAS_CONFIG = {{
-                    "ruta_salida": "{ruta_salida}",  # Ruta seleccionada por el usuario
-                    "ip_servidor": "localhost"  # Valor por defecto
-                }}
-                """
+            nuevo_contenido = textwrap.dedent(f"""
+            # Configuracion de rutas de archivos
+            RUTAS_CONFIG = {{
+                "ruta_salida": "{ruta_salida}",  # Ruta seleccionada por el usuario
+                "ip_servidor": "localhost"       # Valor por defecto
+            }}
+            """)
 
             # Guardar el archivo con el nuevo contenido
             with open(config_file, 'w') as f:

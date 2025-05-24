@@ -1,14 +1,17 @@
 import os
+import textwrap
+
+from src.config import rutas_config
 
 
-def inicializar_rutas_config():
+def inicializar_rutas_config(es_admin):
     """
     Inicializa el archivo de configuración de rutas si no existe.
     Se llama al inicio de la aplicación para garantizar que el archivo existe.
     """
     try:
         # Obtener la ruta al directorio de configuración
-        config_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
+        config_dir = os.path.dirname(os.path.abspath(__file__))
         config_file = os.path.join(config_dir, "rutas_config.py")
 
         # Verificar si el archivo existe
@@ -16,13 +19,13 @@ def inicializar_rutas_config():
             print("Creando archivo de configuración de rutas...")
 
             # Contenido por defecto del archivo
-            default_content = """
-                # Configuración de rutas de archivos
-                RUTAS_CONFIG = {
-                    "ruta_salida": "",  # Se establecerá en tiempo de ejecución
-                    "ip_servidor": "localhost"  # Valor por defecto
-                }
-                """
+            default_content = textwrap.dedent(f"""
+            # Configuracion de rutas de archivos
+            RUTAS_CONFIG = {{
+                "ruta_salida": "",  # Sin ruta por defecto
+                "ip_servidor": "localhost"       # Valor por defecto
+            }}
+            """)
 
             # Aseguramos que el directorio config existe
             if not os.path.exists(config_dir):

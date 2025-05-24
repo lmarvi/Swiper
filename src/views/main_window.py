@@ -2,6 +2,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 
+from src.config.inicializar_config import inicializar_rutas_config
 from src.controllers.acceso_controller import AccesoController
 from src.controllers.centro_productivo_controller import CentroController
 from src.controllers.esquema_controller import EsquemaController
@@ -36,9 +37,9 @@ class MainWindow(QMainWindow):
 
         self.usuario_service = UsuarioService(self)
 
-    def configurar_interfaz(self, esAdmin, nombre_usuario, nombre_centro):
+    def configurar_interfaz(self, es_admin, nombre_usuario, nombre_centro):
 
-        self.ui = MainUI(esAdmin)
+        self.ui = MainUI(es_admin)
         self.setCentralWidget(self.ui)
 
         # Configurar el controlador
@@ -48,6 +49,9 @@ class MainWindow(QMainWindow):
         self._controller_acceso = AccesoController(self.ui)
         self._controller_esquema = EsquemaController(self.ui)
         self._controller_procesado = ProcesadoController(self._controller)
+
+        # Inicializamos la configuración
+        self._controller.cargar_configuracion()
 
         # Pasar el servicio al controlador
         self._controller_usuario.UsuarioService = self.usuario_service
@@ -83,7 +87,7 @@ class MainWindow(QMainWindow):
         self.ui.boton_quitar_disenos.clicked.connect(self._controller.quitar_disenos)
         self.ui.boton_procesar.clicked.connect(self._controller_procesado.iniciar_procesado)
 
-        if esAdmin:
+        if es_admin:
             self.ui.boton_anadir_usuario.clicked.connect(self._controller_usuario.datos_nuevo_usuario)
             self.ui.boton_editar_usuario.clicked.connect(self._controller_usuario.datos_usuario_editado)
             self.ui.boton_eliminar_usuario.clicked.connect(self._controller_usuario.eliminar_id_usuario)

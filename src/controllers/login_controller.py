@@ -8,6 +8,7 @@ class LoginController:
 
     def __init__(self,view):
 
+        self.main_window = None
         self.view = view
         self.login_service = LoginService(self.view)
         self.usuario = None
@@ -25,12 +26,12 @@ class LoginController:
 
 
         if self.login_service.consulta_login(self.usuario,contrasena):
-            esAdmin = self.es_admin()
-            print(f"Usuario {self.usuario} es admin: {esAdmin}")
+            es_admin = self.es_admin()
+            print(f"Usuario {self.usuario} es admin: {es_admin}")
             nombre_centro = self.view.accesos_combobox.currentText()
             nombre_usuario = self.view.usuario_edit.text()
             self.main_window = MainWindow()
-            self.main_window.configurar_interfaz(esAdmin,nombre_usuario,nombre_centro)
+            self.main_window.configurar_interfaz(es_admin,nombre_usuario,nombre_centro)
             self.view.parentWidget().close()
             self.main_window.show()
         else:
@@ -46,14 +47,14 @@ class LoginController:
     def es_admin(self):
         usuario = self.usuario
         admin = "admin"
-        esAdmin = True
+        es_admin = True
         rol = self.login_service.consulta_rol(usuario)
         rol_limpio = rol.strip().lower()
         print("Rol obtenido:", rol_limpio)
         if rol_limpio == admin:
-            return esAdmin
+            return es_admin
         else:
-            esAdmin = False
-            return  esAdmin
+            es_admin = False
+            return  es_admin
 
 

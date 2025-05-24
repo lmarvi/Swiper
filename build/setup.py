@@ -1,5 +1,3 @@
-import sys
-import os
 from cx_Freeze import setup,Executable
 
 files = ['img']
@@ -7,9 +5,9 @@ files = ['img']
 exe = Executable(script=".py", base="Win32GUI")
 
 setup(
-    name = "Swiper de Canales",
+    name = "Swiper",
     version = "0.1",
-    description = "Swiper",
+    description = "Intercambiador de canales",
     author="Luis Martin",
     options={'build.exe': {'include_files': files}},
     executables = [exe],
